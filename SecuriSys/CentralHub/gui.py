@@ -21,7 +21,7 @@ class HubGui:
         self.state = "" # current state of the system (init, input, armed, or disarmed)
         self.prev_state = "" # previous state of the system
 
-        self.app = gz.App(bg="#171717", title="SecuriSys Central Hub", width=500, height=414, layout="grid") # the guizero app object
+        self.app = gz.App(bg="#171717", title="SecuriSys Central Hub", width=500, height=414) # the guizero app object
 
         self._init_app()
 
@@ -33,7 +33,7 @@ class HubGui:
         self._init_status()
 
     def _init_keyboard(self):
-        self.keyboard_box = gz.Box(self.app, width=250, height=414, layout="fill", align="left", border=False, grid=[0,0])
+        self.keyboard_box = gz.Box(self.app, width=250, height=414, layout="fill", align="left", border=False)
         self.keyboard_box.tk.configure(background="#171717")
         self.keyboard_box.tk.configure(bg="#171717")
 
@@ -76,7 +76,7 @@ class HubGui:
             child.configure(bg="#171717")
 
     def _init_status(self):
-        self.status_box = gz.Box(self.app, width=250, height=414, align="right", layout="fill", grid=[0,1])
+        self.status_box = gz.Box(self.app, width=250, height=414, align="right", layout="fill")
         self.status_box.tk.configure(background="#171717")
         self.status_box.tk.configure(bg="#171717")
 
