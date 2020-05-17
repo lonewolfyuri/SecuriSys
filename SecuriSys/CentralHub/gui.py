@@ -14,7 +14,7 @@ s = 40
 
 class HubGui:
     def __init__(self):
-        self.message = "Create New Code" # message to display in gui
+        self.message = "   Create New Code   " # message to display in gui
         self.key = Fernet.generate_key() # key for passcode enc/dec
 
         self.failed = 0
@@ -239,15 +239,15 @@ class HubGui:
 
     def _code_len(self):
         self.code = ""
-        self.message = "Code must be 4-8 Digits"
+        self._change_message("Code must be 4-8 Digits")
 
     def _encrypt_len(self):
         self.encrypt = ""
-        self.message = "Code must be 4-8 Digits"
+        self._change_message("Code must be 4-8 Digits")
 
     def _wrong_code(self):
         self.code = ""
-        self.message = "Wrong Code - Try Again"
+        self._change_message("Wrong Code - Try Again")
 
     def _encrypt_code(self):
         #print(self.encrypt)
@@ -294,7 +294,7 @@ class HubGui:
         self.state = new_state
 
     def _change_message(self, new_message):
-        self.message = new_message
+        self.message = "   " + new_message + "   "
         self.welcome_message.clear()
         self.welcome_message.append(self.message)
 
