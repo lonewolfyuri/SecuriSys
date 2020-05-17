@@ -8,6 +8,10 @@ from cryptography.fernet import Fernet
 
 # self.state values: "init" | "input" | "armed" | "disarmed"
 
+w = 520
+h = 430
+s = 40
+
 class HubGui:
     def __init__(self):
         self.message = "Create New Code" # message to display in gui
@@ -21,7 +25,7 @@ class HubGui:
         self.state = "" # current state of the system (init, input, armed, or disarmed)
         self.prev_state = "" # previous state of the system
 
-        self.app = gz.App(bg="#171717", title="SecuriSys Central Hub", width=500, height=414) # the guizero app object
+        self.app = gz.App(bg="#171717", title="SecuriSys Central Hub", width=w, height=h) # the guizero app object
 
         self._init_app()
 
@@ -33,11 +37,11 @@ class HubGui:
         self._init_status()
 
     def _init_keyboard(self):
-        self.keyboard_box = gz.Box(self.app, width=300, height=414, layout="fill", align="left", border=False)
+        self.keyboard_box = gz.Box(self.app, width=int(w / 2), height=h, layout="fill", align="left", border=False)
         self.keyboard_box.tk.configure(background="#171717")
         self.keyboard_box.tk.configure(bg="#171717")
 
-        self.key_align_box = gz.Box(self.keyboard_box, width=300, height=414, layout="grid", align="right", border=False)
+        self.key_align_box = gz.Box(self.keyboard_box, width=int(w / 2), height=h, layout="grid", align="right", border=False)
         self.key_align_box.tk.configure(background="#171717")
         self.key_align_box.tk.configure(bg="#171717")
 
@@ -76,18 +80,18 @@ class HubGui:
             child.configure(bg="#171717")
 
     def _init_status(self):
-        self.status_box = gz.Box(self.app, width=300, height=414, align="right", layout="fill")
+        self.status_box = gz.Box(self.app, width=int(w / 2), height=h, align="right", layout="fill")
         self.status_box.tk.configure(background="#171717")
         self.status_box.tk.configure(bg="#171717")
 
-        self.status_align_box = gz.Box(self.status_box, width=300, height=414, align="left", layout="fill")
+        self.status_align_box = gz.Box(self.status_box, width=int(w / 2), height=h, align="left", layout="fill")
         self.status_align_box.tk.configure(background="#171717")
         self.status_align_box.tk.configure(bg="#171717")
 
-        self.welcome_box = gz.Box(self.status_align_box, width=300, height=138, align="top")
-        self.welcome_message = gz.Text(self.welcome_box, text=self.message, size=40, font="Times New Roman", color="#C0C0C0", align="bottom")
+        self.welcome_box = gz.Box(self.status_align_box, width=int(w / 2), height=int(h / 3), align="top")
+        self.welcome_message = gz.Text(self.welcome_box, text=self.message, size=s, font="Times New Roman", color="#C0C0C0", align="bottom")
 
-        self.arm_box = gz.Box(self.status_align_box, width=300, height=207, align="bottom")
+        self.arm_box = gz.Box(self.status_align_box, width=int(w / 2), height=int(h / 2), align="bottom")
         self.arm_box.tk.configure(background="#171717")
         self.arm_box.tk.configure(bg="#171717")
 
