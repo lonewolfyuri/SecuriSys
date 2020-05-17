@@ -84,7 +84,7 @@ class HubGui:
         self.status_align_box.tk.configure(background="#171717")
         self.status_align_box.tk.configure(bg="#171717")
 
-        self.welcome_box = gz.Box(self.status_align_box, width=250, height=207, align="top")
+        self.welcome_box = gz.Box(self.status_align_box, width=250, height=138, align="top")
         self.welcome_message = gz.Text(self.welcome_box, text=self.message, size=40, font="Times New Roman", color="#C0C0C0", align="bottom")
 
         self.arm_box = gz.Box(self.status_align_box, width=250, height=207, align="bottom")
