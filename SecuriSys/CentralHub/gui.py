@@ -8,7 +8,7 @@ from cryptography.fernet import Fernet
 
 # self.state values: "init" | "input" | "armed" | "disarmed"
 
-w = 520
+w = 560
 h = 430
 s = 40
 
