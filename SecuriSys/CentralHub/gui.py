@@ -8,7 +8,7 @@ from cryptography.fernet import Fernet
 
 # self.state values: "init" | "input" | "armed" | "disarmed"
 
-w = 820
+w = 860
 h = 430
 s = 40
 
@@ -239,15 +239,15 @@ class HubGui:
 
     def _code_len(self):
         self.code = ""
-        self._change_message("Code must be 4-8 Digits")
+        self._change_message("Must be 4-8 Digits")
 
     def _encrypt_len(self):
         self.encrypt = ""
-        self._change_message("Code must be 4-8 Digits")
+        self._change_message("Must be 4-8 Digits")
 
     def _wrong_code(self):
         self.code = ""
-        self._change_message("Wrong Code - Try Again")
+        self._change_message("Wrong Code!!!")
 
     def _encrypt_code(self):
         #print(self.encrypt)
