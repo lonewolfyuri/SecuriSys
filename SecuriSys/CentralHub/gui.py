@@ -33,11 +33,11 @@ class HubGui:
         self._init_status()
 
     def _init_keyboard(self):
-        self.keyboard_box = gz.Box(self.app, width=250, height=414, layout="fill", align="left", border=False)
+        self.keyboard_box = gz.Box(self.app, width=300, height=414, layout="fill", align="left", border=False)
         self.keyboard_box.tk.configure(background="#171717")
         self.keyboard_box.tk.configure(bg="#171717")
 
-        self.key_align_box = gz.Box(self.keyboard_box, width=250, height=414, layout="grid", align="right", border=False)
+        self.key_align_box = gz.Box(self.keyboard_box, width=300, height=414, layout="grid", align="right", border=False)
         self.key_align_box.tk.configure(background="#171717")
         self.key_align_box.tk.configure(bg="#171717")
 
@@ -76,18 +76,18 @@ class HubGui:
             child.configure(bg="#171717")
 
     def _init_status(self):
-        self.status_box = gz.Box(self.app, width=250, height=414, align="right", layout="fill")
+        self.status_box = gz.Box(self.app, width=300, height=414, align="right", layout="fill")
         self.status_box.tk.configure(background="#171717")
         self.status_box.tk.configure(bg="#171717")
 
-        self.status_align_box = gz.Box(self.status_box, width=250, height=414, align="left", layout="fill")
+        self.status_align_box = gz.Box(self.status_box, width=300, height=414, align="left", layout="fill")
         self.status_align_box.tk.configure(background="#171717")
         self.status_align_box.tk.configure(bg="#171717")
 
-        self.welcome_box = gz.Box(self.status_align_box, width=250, height=138, align="top")
+        self.welcome_box = gz.Box(self.status_align_box, width=300, height=138, align="top")
         self.welcome_message = gz.Text(self.welcome_box, text=self.message, size=40, font="Times New Roman", color="#C0C0C0", align="bottom")
 
-        self.arm_box = gz.Box(self.status_align_box, width=250, height=207, align="bottom")
+        self.arm_box = gz.Box(self.status_align_box, width=300, height=207, align="bottom")
         self.arm_box.tk.configure(background="#171717")
         self.arm_box.tk.configure(bg="#171717")
 
