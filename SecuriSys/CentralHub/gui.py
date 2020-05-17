@@ -33,7 +33,7 @@ class HubGui:
         self._init_status()
 
     def _init_keyboard(self):
-        self.keyboard_box = gz.Box(self.app, width=int(self.app.width / 2), height=self.app.height, layout="grid", align="left")
+        self.keyboard_box = gz.Box(self.app, width=int(self.app.width / 2), height=self.app.height, layout="grid", align="left", border=False)
         self.keyboard_box.tk.configure(background="#171717")
         self.keyboard_box.tk.configure(bg="#171717")
 
