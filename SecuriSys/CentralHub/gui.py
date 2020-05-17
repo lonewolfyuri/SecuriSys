@@ -27,6 +27,7 @@ class HubGui:
 
     def _init_app(self):
         self.app.set_full_screen()
+        #pi dimensions: W - 500 | H - 414
         self._init_state()
         self._init_keyboard()
         self._init_status()
@@ -36,7 +37,7 @@ class HubGui:
         self.keyboard_box.tk.configure(background="#171717")
         self.keyboard_box.tk.configure(bg="#171717")
 
-        curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=int(self.keyboard_box.width / 3), height=int(self.keyboard_box.height / 4), image="key_1.gif", command=self._input_1, grid=[0,0])
+        curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=int(self.keyboard_box.width / 3), height=int(self.keyboard_box.height / 4), image="key_1_smol.gif", command=self._input_1, grid=[0,0])
         curBtn.bg = "#171717"
 
         curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=int(self.keyboard_box.width / 3), height=int(self.keyboard_box.height / 4), image="key_2.gif", command=self._input_2, grid=[1,0])
