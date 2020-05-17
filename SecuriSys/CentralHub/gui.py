@@ -21,7 +21,7 @@ class HubGui:
         self.state = "" # current state of the system (init, input, armed, or disarmed)
         self.prev_state = "" # previous state of the system
 
-        self.app = gz.App(bg="#171717", title="SecuriSys Central Hub") # the guizero app object
+        self.app = gz.App(bg="#171717", title="SecuriSys Central Hub", width=500, height=414) # the guizero app object
 
         self._init_app()
 
@@ -33,56 +33,65 @@ class HubGui:
         self._init_status()
 
     def _init_keyboard(self):
-        self.keyboard_box = gz.Box(self.app, width=int(self.app.width / 2), height=self.app.height, layout="grid", align="left", border=False)
+        self.keyboard_box = gz.Box(self.app, width=250, height=414, layout="fill", align="left", border=False)
         self.keyboard_box.tk.configure(background="#171717")
         self.keyboard_box.tk.configure(bg="#171717")
 
-        curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=int(self.keyboard_box.width / 3), height=int(self.keyboard_box.height / 4), image="key_1_smol.gif", command=self._input_1, grid=[0,0])
+        self.key_align_box = gz.Box(self.keyboard_box, width=250, height=414, layout="grid", align="right", border=False)
+        self.key_align_box.tk.configure(background="#171717")
+        self.key_align_box.tk.configure(bg="#171717")
+
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_1_smol.gif", command=self._input_1, grid=[0,0])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=int(self.keyboard_box.width / 3), height=int(self.keyboard_box.height / 4), image="key_2_smol.gif", command=self._input_2, grid=[1,0])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_2_smol.gif", command=self._input_2, grid=[1,0])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=int(self.keyboard_box.width / 3), height=int(self.keyboard_box.height / 4), image="key_3_smol.gif", command=self._input_3, grid=[2,0])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_3_smol.gif", command=self._input_3, grid=[2,0])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=int(self.keyboard_box.width / 3), height=int(self.keyboard_box.height / 4), image="key_4_smol.gif", command=self._input_4, grid=[0,1])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_4_smol.gif", command=self._input_4, grid=[0,1])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=int(self.keyboard_box.width / 3), height=int(self.keyboard_box.height / 4), image="key_5_smol.gif", command=self._input_5, grid=[1,1])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_5_smol.gif", command=self._input_5, grid=[1,1])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=int(self.keyboard_box.width / 3), height=int(self.keyboard_box.height / 4), image="key_6_smol.gif", command=self._input_6, grid=[2,1])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_6_smol.gif", command=self._input_6, grid=[2,1])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=int(self.keyboard_box.width / 3), height=int(self.keyboard_box.height / 4), image="key_7_smol.gif", command=self._input_7, grid=[0,2])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_7_smol.gif", command=self._input_7, grid=[0,2])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=int(self.keyboard_box.width / 3), height=int(self.keyboard_box.height / 4), image="key_8_smol.gif", command=self._input_8, grid=[1,2])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_8_smol.gif", command=self._input_8, grid=[1,2])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=int(self.keyboard_box.width / 3), height=int(self.keyboard_box.height / 4), image="key_9_smol.gif", command=self._input_9, grid=[2,2])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_9_smol.gif", command=self._input_9, grid=[2,2])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.keyboard_box, padx=0, pady=0, width=self.keyboard_box.width, height=int(self.keyboard_box.height / 4), image="key_0_smol.gif", command=self._input_0, grid=[0,3,3,1])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_0_smol.gif", command=self._input_0, grid=[1,3])
         curBtn.bg = "#171717"
 
-        for child in self.keyboard_box.tk.winfo_children():
+        for child in self.key_align_box.tk.winfo_children():
             child.configure(background="#171717")
             child.configure(bg="#171717")
 
     def _init_status(self):
-        self.status_box = gz.Box(self.app, width=int(self.app.width / 2), height=self.app.height, align="right")
+        self.status_box = gz.Box(self.app, width=250, height=414, align="right", layout="fill")
         self.status_box.tk.configure(background="#171717")
         self.status_box.tk.configure(bg="#171717")
 
-        self.welcome_box = gz.Box(self.status_box, width=self.status_box.width, height=int(self.status_box.height / 3), align="top")
+        self.status_align_box = gz.Box(self.status_box, width=250, height=414, align="left", layout="fill")
+        self.status_align_box.tk.configure(background="#171717")
+        self.status_align_box.tk.configure(bg="#171717")
+
+        self.welcome_box = gz.Box(self.status_align_box, width=250, height=207, align="top")
         self.welcome_message = gz.Text(self.welcome_box, text=self.message, size=40, font="Times New Roman", color="#C0C0C0", align="bottom")
 
-        self.arm_box = gz.Box(self.status_box, width=self.status_box.width, height=int(self.status_box.height / 2), align="bottom")
+        self.arm_box = gz.Box(self.status_align_box, width=250, height=207, align="bottom")
         self.arm_box.tk.configure(background="#171717")
         self.arm_box.tk.configure(bg="#171717")
-        self.arm_button = gz.PushButton(self.arm_box, command=self._handle_arm, image="button_arm_smol.gif", align="top", width=int(self.arm_box.width * 0.8), height=int(self.arm_box.height / 2))
+
+        self.arm_button = gz.PushButton(self.arm_box, command=self._handle_arm, image="button_arm_smol.gif", align="top", width=233, height=90)
         self.arm_button.tk.configure(background="#171717")
         self.arm_button.tk.configure(bg="#171717")
         self.arm_button.bg = "#171717"
