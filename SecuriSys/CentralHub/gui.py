@@ -49,34 +49,34 @@ class HubGui:
         self.key_align_box.tk.borderwidth = 0
         self.key_align_box.tk.highlightthickness = 0
 
-        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_1_black_smol.gif", command=self._input_1, grid=[0,0])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="resources/key_1_black_smol.gif", command=self._input_1, grid=[0,0])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_2_black_smol.gif", command=self._input_2, grid=[1,0])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="resources/key_2_black_smol.gif", command=self._input_2, grid=[1,0])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_3_black_smol.gif", command=self._input_3, grid=[2,0])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="resources/key_3_black_smol.gif", command=self._input_3, grid=[2,0])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_4_black_smol.gif", command=self._input_4, grid=[0,1])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="resources/key_4_black_smol.gif", command=self._input_4, grid=[0,1])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_5_black_smol.gif", command=self._input_5, grid=[1,1])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="resources/key_5_black_smol.gif", command=self._input_5, grid=[1,1])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_6_black_smol.gif", command=self._input_6, grid=[2,1])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="resources/key_6_black_smol.gif", command=self._input_6, grid=[2,1])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_7_black_smol.gif", command=self._input_7, grid=[0,2])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="resources/key_7_black_smol.gif", command=self._input_7, grid=[0,2])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_8_black_smol.gif", command=self._input_8, grid=[1,2])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="resources/key_8_black_smol.gif", command=self._input_8, grid=[1,2])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_9_black_smol.gif", command=self._input_9, grid=[2,2])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="resources/key_9_black_smol.gif", command=self._input_9, grid=[2,2])
         curBtn.bg = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_0_black_smol.gif", command=self._input_0, grid=[1,3])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="resources/key_0_black_smol.gif", command=self._input_0, grid=[1,3])
         curBtn.bg = "#171717"
 
         for child in self.key_align_box.tk.winfo_children():
@@ -101,7 +101,7 @@ class HubGui:
         self.arm_box.tk.configure(background="#171717")
         self.arm_box.tk.configure(bg="#171717")
 
-        self.arm_button = gz.PushButton(self.arm_box, command=self._handle_arm, image="button_arm_smol.gif", align="top", width=233, height=90)
+        self.arm_button = gz.PushButton(self.arm_box, command=self._handle_arm, image="resources/button_arm_smol.gif", align="top", width=233, height=90)
         self.arm_button.tk.configure(background="#171717")
         self.arm_button.tk.configure(bg="#171717")
         self.arm_button.bg = "#171717"
@@ -306,9 +306,9 @@ class HubGui:
 
     def _toggle_arm_button(self):
         if self.state == "armed":
-            self.arm_button.image = "button_disarm_smol.gif"
+            self.arm_button.image = "resources/button_disarm_smol.gif"
         else:
-            self.arm_button.image = "button_arm_smol.gif"
+            self.arm_button.image = "resources/button_arm_smol.gif"
 
 
 
