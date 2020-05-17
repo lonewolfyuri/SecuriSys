@@ -82,6 +82,8 @@ class HubGui:
         for child in self.key_align_box.tk.winfo_children():
             child.configure(background="#171717")
             child.configure(bg="#171717")
+            child.borderwidth = 0
+            child.highlightthickness = 0
 
     def _init_status(self):
         self.status_box = gz.Box(self.app, width=int(w / 2), height=h, align="right", layout="fill")
