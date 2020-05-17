@@ -40,10 +40,14 @@ class HubGui:
         self.keyboard_box = gz.Box(self.app, width=int(w / 2), height=h, layout="fill", align="left", border=False)
         self.keyboard_box.tk.configure(background="#171717")
         self.keyboard_box.tk.configure(bg="#171717")
+        self.keyboard_box.tk.borderwidth=0
+        self.keyboard_box.tk.highlightthickness=0
 
         self.key_align_box = gz.Box(self.keyboard_box, width=int(w / 2), height=h, layout="grid", align="right", border=False)
         self.key_align_box.tk.configure(background="#171717")
         self.key_align_box.tk.configure(bg="#171717")
+        self.key_align_box.tk.borderwidth = 0
+        self.key_align_box.tk.highlightthickness = 0
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=83, height=103, image="key_1_smol.gif", command=self._input_1, grid=[0,0])
         curBtn.bg = "#171717"
