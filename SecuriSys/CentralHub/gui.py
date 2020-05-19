@@ -49,7 +49,7 @@ class HubGui:
         self.key_align_box.tk.borderwidth = 0
         self.key_align_box.tk.highlightthickness = 0
 
-        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.5), image="resources/key_1_black_smol.gif", command=self._input_1, grid=[0,0])
+        curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_1_black_smol.gif", command=self._input_1, grid=[0,0])
         curBtn.bg = "#171717"
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_2_black_smol.gif", command=self._input_2, grid=[1,0])
