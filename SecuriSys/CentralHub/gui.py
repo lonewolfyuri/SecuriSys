@@ -51,6 +51,7 @@ class HubGui:
         self.keyboard_box.tk.configure(bg="#171717")
         self.keyboard_box.text_color = "#171717"
         self.keyboard_box.tk.borderwidth = 0
+        self.keyboard_box.tk.bd = 0
         self.keyboard_box.tk.highlightthickness = 0
         self.keyboard_box.tk.highlightcolor = "#171717"
         self.keyboard_box.tk.highlightbackground = "#171717"
@@ -60,6 +61,7 @@ class HubGui:
         self.key_align_box.tk.configure(bg="#171717")
         self.key_align_box.text_color = "#171717"
         self.key_align_box.tk.borderwidth = 0
+        self.key_align_box.tk.bd = 0
         self.key_align_box.tk.highlightthickness = 0
         self.key_align_box.tk.highlightcolor = "#171717"
         self.key_align_box.tk.highlightbackground = "#171717"
@@ -102,16 +104,24 @@ class HubGui:
         curBtn.text_color = "#171717"
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_0_black_smol.gif", command=self._input_0, grid=[1,3])
+        curBtn.tk.borderwidth = 0
+        curBtn.tk.bd = 0
+        curBtn.tk.highlightthickness = 0
+        curBtn.tk.highlightcolor = "#171717"
+        curBtn.tk.highlightbackground = "#171717"
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
+        '''
         for child in self.key_align_box.tk.winfo_children():
             child.configure(background="#171717")
             child.configure(bg="#171717")
             child.borderwidth = 0
+            child.bd = 0
             child.highlightthickness = 0
             child.highlightcolor = "#171717"
             child.highlightbackground = "#171717"
+        '''
 
     def _init_status(self):
         self.status_box = gz.Box(self.app, width=int(w / 2), height=h, align="right", layout="fill")
