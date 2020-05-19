@@ -27,63 +27,91 @@ class HubGui:
 
         self.app = gz.App(bg="#171717", title="SecuriSys Central Hub", width=w, height=h) # the guizero app object
 
+        self._init_net()
         self._init_app()
+
+    def _init_net(self):
+        return
 
     def _init_app(self):
         self.app.set_full_screen()
         #pi dimensions: W - 500 | H - 414
         self._init_state()
+
         self._init_keyboard()
         self._init_status()
+        self._init_hidden()
+
+    def _init_state(self):
+        self._change_state("init")
 
     def _init_keyboard(self):
         self.keyboard_box = gz.Box(self.app, width=int(w / 2), height=h, layout="fill", align="left", border=False)
         self.keyboard_box.tk.configure(background="#171717")
         self.keyboard_box.tk.configure(bg="#171717")
-        self.keyboard_box.tk.borderwidth=0
-        self.keyboard_box.tk.highlightthickness=0
+        self.keyboard_box.text_color = "#171717"
+        self.keyboard_box.tk.borderwidth = 0
+        self.keyboard_box.tk.highlightthickness = 0
+        self.keyboard_box.tk.highlightcolor = "#171717"
+        self.keyboard_box.tk.highlightbackground = "#171717"
 
         self.key_align_box = gz.Box(self.keyboard_box, width=int(w / 2), height=h, layout="grid", align="right", border=False)
         self.key_align_box.tk.configure(background="#171717")
         self.key_align_box.tk.configure(bg="#171717")
+        self.key_align_box.text_color = "#171717"
         self.key_align_box.tk.borderwidth = 0
         self.key_align_box.tk.highlightthickness = 0
+        self.key_align_box.tk.highlightcolor = "#171717"
+        self.key_align_box.tk.highlightbackground = "#171717"
+
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_1_black_smol.gif", command=self._input_1, grid=[0,0])
         curBtn.bg = "#171717"
+        curBtn.text_color = "#171717"
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_2_black_smol.gif", command=self._input_2, grid=[1,0])
         curBtn.bg = "#171717"
+        curBtn.text_color = "#171717"
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_3_black_smol.gif", command=self._input_3, grid=[2,0])
         curBtn.bg = "#171717"
+        curBtn.text_color = "#171717"
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_4_black_smol.gif", command=self._input_4, grid=[0,1])
         curBtn.bg = "#171717"
+        curBtn.text_color = "#171717"
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_5_black_smol.gif", command=self._input_5, grid=[1,1])
         curBtn.bg = "#171717"
+        curBtn.text_color = "#171717"
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_6_black_smol.gif", command=self._input_6, grid=[2,1])
         curBtn.bg = "#171717"
+        curBtn.text_color = "#171717"
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_7_black_smol.gif", command=self._input_7, grid=[0,2])
         curBtn.bg = "#171717"
+        curBtn.text_color = "#171717"
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_8_black_smol.gif", command=self._input_8, grid=[1,2])
         curBtn.bg = "#171717"
+        curBtn.text_color = "#171717"
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_9_black_smol.gif", command=self._input_9, grid=[2,2])
         curBtn.bg = "#171717"
+        curBtn.text_color = "#171717"
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_0_black_smol.gif", command=self._input_0, grid=[1,3])
         curBtn.bg = "#171717"
+        curBtn.text_color = "#171717"
 
         for child in self.key_align_box.tk.winfo_children():
             child.configure(background="#171717")
             child.configure(bg="#171717")
             child.borderwidth = 0
             child.highlightthickness = 0
+            child.highlightcolor = "#171717"
+            child.highlightbackground = "#171717"
 
     def _init_status(self):
         self.status_box = gz.Box(self.app, width=int(w / 2), height=h, align="right", layout="fill")
@@ -106,8 +134,13 @@ class HubGui:
         self.arm_button.tk.configure(bg="#171717")
         self.arm_button.bg = "#171717"
 
-    def _init_state(self):
-        self._change_state("init")
+    def _init_hidden(self):
+        self.sampling_widget = gz.Box(self.app, visible=False)
+        self.sampling_widget.repeat(100, self._handle_sample)
+
+    def _handle_sample(self):
+        #print("Another Sample!!!")
+        return
 
     def _input_0(self):
         print(self.state)
