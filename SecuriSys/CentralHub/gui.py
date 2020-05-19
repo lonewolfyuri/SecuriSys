@@ -50,7 +50,7 @@ class HubGui:
         self.keyboard_box.tk.configure(bd=0)
         self.keyboard_box.tk.configure(highlightthickness=0)
         self.keyboard_box.tk.configure(highlightcolor="#171717")
-        self.keyboard_box.tk.configure(ighlightbackground="#171717")
+        self.keyboard_box.tk.configure(highlightbackground="#171717")
 
         self.key_align_box = gz.Box(self.keyboard_box, width=int(w / 2), height=h, layout="grid", align="right", border=False)
         self.key_align_box.text_color = "#171717"
@@ -60,7 +60,7 @@ class HubGui:
         self.key_align_box.tk.configure(bd=0)
         self.key_align_box.tk.configure(highlightthickness=0)
         self.key_align_box.tk.configure(highlightcolor="#171717")
-        self.key_align_box.tk.configure(ighlightbackground="#171717")
+        self.key_align_box.tk.configure(highlightbackground="#171717")
 
 
         curBtn = gz.PushButton(self.key_align_box, padx=0, pady=0, width=int(w / 7), height=int(h / 4.2), image="resources/key_1_black_smol.gif", command=self._input_1, grid=[0,0])
@@ -121,7 +121,7 @@ class HubGui:
             child.configure(bd=0)
             child.configure(highlightthickness=0)
             child.configure(highlightcolor="#171717")
-            child.configure(ighlightbackground="#171717")
+            child.configure(highlightbackground="#171717")
 
     def _init_status(self):
         self.status_box = gz.Box(self.app, width=int(w / 2), height=h, align="right", layout="fill")
