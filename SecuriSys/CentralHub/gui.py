@@ -103,17 +103,6 @@ class HubGui:
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
-        '''
-        curBtn.image = tk.PhotoImage(file='resources/key_0_black_smol.gif')
-        curBtn.tk.borderwidth = 0
-        curBtn.tk.bd = 0
-        curBtn.tk.highlightthickness = 0
-        curBtn.tk.highlightcolor = "#171717"
-        curBtn.tk.highlightbackground = "#171717"
-        curBtn.bg = "#171717"
-        curBtn.text_color = "#171717"
-        '''
-
         for child in self.key_align_box.tk.winfo_children():
             child.configure(background="#171717")
             child.configure(bg="#171717")

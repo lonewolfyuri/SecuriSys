@@ -4,84 +4,93 @@
 import RPi.GPIO as GPIO
 import time
 
-motionSen = 21   ## GPIO pin of motion sen
-lightSen = 16   ## GPIO pin of light sen
-soundSen = 24    ## GPIO pin of sound sen
-gasSen= 18 ;     ## GPIO pin of gas sen
-vibrateSen = 4; ## GPIO pin of vibrate sen
+class Sensor:
+    def __init__(self, time = 300):
+        self.motionSen = 21   ## GPIO pin of motion sen
+        self.lightSen = 16   ## GPIO pin of light sen
+        self.soundSen = 24    ## GPIO pin of sound sen
+        self.gasSen= 18 ;     ## GPIO pin of gas sen
+        self.vibrateSen = 4; ## GPIO pin of vibrate sen
 
-#GPIO SETUP of sensors
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(motionSen, GPIO.IN)
-GPIO.setup(lightSen, GPIO.IN)
-GPIO.setup(soundSen, GPIO.IN)
-GPIO.setup(gasSen, GPIO.IN)
-GPIO.setup(vibrateSen, GPIO.IN)
+        self._init_sensors()
+        self._init_events(time)
 
-#initial empty tuple of all functs
-sensors = ()
+    def _init_sensors(self):
+        #GPIO SETUP of sensors
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.motionSen, GPIO.IN)
+        GPIO.setup(self.lightSen, GPIO.IN)
+        GPIO.setup(self.soundSen, GPIO.IN)
+        GPIO.setup(self.gasSen, GPIO.IN)
+        GPIO.setup(self.vibrateSen, GPIO.IN)
 
+        #initial empty tuple of all functs
+        self.sensors = ()
 
-## bool sensor functs
+    def _init_events(self, time = 300):
+        #Adding motion function to the GPIO pin 21
+        GPIO.add_event_detect(self.motionSen, GPIO.BOTH, bouncetime=time);
+        GPIO.add_event_callback(self.motionSen, self.Motion);
 
-## could add the while loop to continously read from sensors in each function
-## right now, its just a basic shell that returns true if activity is found and false otherwise
-def Motion(motionSen):
-    if GPIO.input(motionSen):
-        return True;
-    else:
-        return False;
+        #Adding light function to the GPIO pin 16
+        GPIO.add_event_detect(self.lightSen, GPIO.BOTH, bouncetime=time);
+        GPIO.add_event_callback(self.lightSen, self.Light);
 
-def Light(lightSen):
-    if GPIO.input(lightSen):
-        return True;
-    else:
-        return False;
+        #Adding sound function to the GPIO pin 24
+        GPIO.add_event_detect(self.soundSen, GPIO.BOTH, bouncetime=time);
+        GPIO.add_event_callback(self.soundSen, self.Sound);
 
-def Sound(soundSen):
-    if GPIO.input(soundSen):
-        return True;
-    else:
-        return False;
+        #Adding gas function to the GPIO pin 18
+        GPIO.add_event_detect(self.gasSen, GPIO.BOTH, bouncetime=time);
+        GPIO.add_event_callback(self.gasSen, self.Gas);
 
-def Gas(gasSen):
-    if GPIO.input(gasSen):
-        return True;
-    else:
-        return False;
+        #Adding vibration function to the GPIO pin 4
+        GPIO.add_event_detect(self.vibrateSen, GPIO.BOTH, bouncetime=time);
+        GPIO.add_event_callback(self.vibrateSen, self.Vibration);
 
-def Vibration(vibrateSen):
-    if GPIO.input(vibrateSen):
-        return True;
-    else:
-        return False;
+    ## bool sensor functs
 
-#Adding motion function to the GPIO pin 21
-GPIO.add_event_detect(motionSen, GPIO.BOTH, bouncetime=300);
-GPIO.add_event_callback(motionSen, Motion);
+    ## could add the while loop to continously read from sensors in each function
+    ## right now, its just a basic shell that returns true if activity is found and false otherwise
+    def Motion(self):
+        if GPIO.input(self.motionSen):
+            return True;
+        else:
+            return False;
 
-#Adding light function to the GPIO pin 16
-GPIO.add_event_detect(lightSen, GPIO.BOTH, bouncetime=300);
-GPIO.add_event_callback(lightSen, Light);
+    def Light(self):
+        if GPIO.input(self.lightSen):
+            return True;
+        else:
+            return False;
 
-#Adding sound function to the GPIO pin 24
-GPIO.add_event_detect(soundSen, GPIO.BOTH, bouncetime=300);
-GPIO.add_event_callback(soundSen, Sound);
+    def Sound(self):
+        if GPIO.input(self.soundSen):
+            return True;
+        else:
+            return False;
 
-#Adding gas function to the GPIO pin 18
-GPIO.add_event_detect(gasSen, GPIO.BOTH, bouncetime=300);
-GPIO.add_event_callback(gasSen, Gas);
+    def Gas(self):
+        if GPIO.input(self.gasSen):
+            return True;
+        else:
+            return False;
 
-#Adding vibration function to the GPIO pin 4
-GPIO.add_event_detect(vibrateSen, GPIO.BOTH, bouncetime=300);
-GPIO.add_event_callback(vibrateSen, Vibration);
+    def Vibration(self):
+        if GPIO.input(self.vibrateSen):
+            return True;
+        else:
+            return False;
 
-#updated sensor tuple w all the funct but are not continously active
-#still returns bool
-sensors = (Motion(motionSen), Light(lightSen), Sound(soundSen), Gas(gasSen), Vibration(vibrateSen));
+    def get_sample(self):
+        #updated sensor tuple w all the funct but are not continously active
+        #still returns bool
+        self.sensors = (self.Motion(self.motionSen), self.Light(self.lightSen), self.Sound(self.soundSen), self.Gas(self.gasSen), self.Vibration(self.vibrateSen));
+        return self.sensors
 
-for x in sensors:
-    print(x)
+    def print_sample(self):
+        for x in self.sensors:
+            print(x)
 
 ## loop to activate sensors continously ##
 """ while True:
@@ -91,3 +100,11 @@ for x in sensors:
     Gas(gasSen);
     Vibration(vibrateSen);
 """
+
+if __name__ == "__main__":
+    sen = Sensor()
+
+    while True:
+        sen.get_sample()
+        sen.print_sample()
+        time.sleep(0.5)
