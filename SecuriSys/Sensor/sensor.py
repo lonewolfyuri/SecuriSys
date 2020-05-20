@@ -52,20 +52,20 @@ class Sensor:
 
     ## could add the while loop to continously read from sensors in each function
     ## right now, its just a basic shell that returns true if activity is found and false otherwise
-    def Motion(self):
-        return GPIO.input(self.motionSen)
+    def Motion(self, motionSen):
+        return GPIO.input(motionSen)
 
-    def Light(self):
-        return GPIO.input(self.lightSen)
+    def Light(self, lightSen):
+        return GPIO.input(lightSen)
 
-    def Sound(self):
-        return GPIO.input(self.soundSen)
+    def Sound(self, soundSen):
+        return GPIO.input(soundSen)
 
-    def Gas(self):
-        return GPIO.input(self.gasSen)
+    def Gas(self, gasSen):
+        return GPIO.input(gasSen)
 
-    def Vibration(self):
-        return GPIO.input(self.vibrateSen)
+    def Vibration(self, vibrateSen):
+        return GPIO.input(vibrateSen)
 
     def get_sample(self):
         #updated sensor tuple w all the funct but are not continously active
