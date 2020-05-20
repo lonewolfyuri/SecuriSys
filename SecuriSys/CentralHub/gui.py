@@ -342,13 +342,10 @@ class HubGui:
         else:
             self.arm_button.image = "resources/button_arm_smol.gif"
 
-
-
     def display(self):
         self.app.display()
 
 
 if __name__ == "__main__":
     hub_gui = HubGui()
-
     hub_gui.display()
