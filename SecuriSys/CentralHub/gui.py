@@ -52,8 +52,8 @@ class HubGui:
         self.sub_socket.connect("%s:%s" % (self.sens_addr, self.sens_port))
         self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
 
-        self.sub_socket.setsockopt(zmq.SUBSCRIBE, self.sens_topic)
-        self.sub_socket.setsockopt(zmq.SUBSCRIBE, self.surv_topic)
+        self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.sens_topic)
+        self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.surv_topic)
 
         self.pub_socket.bind("tcp://*:%s" % self.fog_port)
 
