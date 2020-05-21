@@ -1,15 +1,29 @@
 import guizero as gz
 import tkinter as tk
 from cryptography.fernet import Fernet
+import sys, zmq, select
 
 # self.state values: "init" | "input" | "armed" | "disarmed"
+
+# Topic Filters: "10001" - Centeral Hub | "10002" - Sensors | "10003" - Screenshots | "10004" - Footage
+HUB_TOPIC = "10001"
+SENSOR_TOPIC = "10002"
+SCREENSHOT_TOPIC = "10003"
+FOOTAGE_TOPIC = "10004"
 
 w = 800
 h = 430
 s = 40
 
 class HubGui:
-    def __init__(self):
+    def __init__(self, sens_port = "6000", surv_port = "7000", fog_port = "8000", sens_addr = "tcp://localhost", surv_addr = "tcp://localhost"):
+        self.sens_port = sens_port
+        self.surv_port = surv_port
+        self.fog_port = fog_port
+
+        self.sens_addr = sens_addr
+        self.surv_addr = surv_addr
+
         self.message = "   Create New Code   " # message to display in gui
         self.key = Fernet.generate_key() # key for passcode enc/dec
 
@@ -27,7 +41,26 @@ class HubGui:
         self._init_app()
 
     def _init_net(self):
-        return
+        self.sens_topic = SENSOR_TOPIC
+        self.surv_topic = SCREENSHOT_TOPIC
+
+        self.context = zmq.Contect()
+        self.sub_socket = self.context.socket(zmq.SUB)
+
+        self.pub_socket = self.context.socket(zmq.PUB)
+        self.pub_socket.setblocking(False)
+
+        self.sub_socket.connect("%s:%s" % self.sens_addr, self.sens_port)
+        self.sub_socket.connect("%s:%s" % self.surv_addr, self.surv_port)
+
+        self.sub_socket.setsockopt(zmq.SUBSCRIBE, self.sens_topic)
+        self.sub_socket.setsockopt(zmq.SUBSCRIBE, self.surv_topic)
+
+        self.pub_socket.bind("tcp://*:%s" % self.fog_port)
+
+        self.read_list = [self.sub_socket]
+        self.write_list = [self.pub_socket]
+        self.err_list = [self.sub_socket, self.pub_socket]
 
     def _init_app(self):
         self.app.set_full_screen()
@@ -135,11 +168,86 @@ class HubGui:
 
     def _init_hidden(self):
         self.sampling_widget = gz.Box(self.app, visible=False)
-        self.sampling_widget.repeat(100, self._handle_sample)
+        self.sampling_widget.repeat(50, self._handle_sockets)
 
-    def _handle_sample(self):
+    def _handle_sockets(self):
+        self._reset_flags()
+        readable, writable, errored = select.select(self.read_list, self.write_list, self.err_list)
+
+        for sock in errored:
+            # re-establish connection
+            continue
+
+        for sock in readable:
+            result = sock.recv()
+            topic = result[0:5]
+            if topic == SENSOR_TOPIC:
+                self._handle_sensor(result[5:]) # handle sensor data
+            elif topic == SCREENSHOT_TOPIC:
+                self.screenshot = True # handle screenshot
+
+            print("Result Input: %s" % result)
+
+        self._process_results()
+
+        if self.alarm:
+            message = self._get_message()
+            for sock in writable:
+                sock.send("%d%d" % HUB_TOPIC, message)
+            print("Message Output: %s" % message)
+
         #print("Another Sample!!!")
         return
+
+    def _reset_flags(self):
+        self.screenshot = False
+        self.motion = False
+        self.light = False
+        self.sound = False
+        self.gas = False
+        self.vibration = False
+
+    def _handle_sensor(self, data):
+        self.motion = data[0] == '1'
+        self.light = data[1] == '1'
+        self.sound = data[2] == '1'
+        self.gas = data[3] == '1'
+        self.vibration = data[4] == '1'
+
+    def _get_message(self):
+        result = ""
+
+        if self.screenshot:
+            result += '1'
+        else:
+            result += '0'
+
+        if self.motion:
+            result += '1'
+        else:
+            result += '0'
+
+        if self.light:
+            result += '1'
+        else:
+            result += '0'
+
+        if self.sound:
+            result += '1'
+        else:
+            result += '0'
+
+        if self.gas:
+            result += '1'
+        else:
+            result += '0'
+
+        if self.vibration:
+            result += '1'
+        else:
+            result += '0'
+
+        return result
 
     def _input_0(self):
         print(self.state)
@@ -305,6 +413,7 @@ class HubGui:
             if self._check_code():
                 self.failed = 0
                 if self.prev_state == "armed":
+                    self._stop_alarm()
                     self._change_message("Disarmed")
                     self._change_state("disarmed")
                     self._toggle_arm_button()
@@ -341,6 +450,19 @@ class HubGui:
             self.arm_button.image = "resources/button_disarm_smol.gif"
         else:
             self.arm_button.image = "resources/button_arm_smol.gif"
+
+    def _process_results(self):
+        if not self.alarm:
+            if self.state == 'armed' or self.prev_state == 'armed':
+                result = self.screenshot or self.motion or self.sound or self.light or self.gas or self.vibration
+                if result:
+                    self._sound_alarm()
+
+    def _sound_alarm(self):
+        self.alarm = True
+
+    def _stop_alarm(self):
+        self.alarm = False
 
     def display(self):
         self.app.display()
