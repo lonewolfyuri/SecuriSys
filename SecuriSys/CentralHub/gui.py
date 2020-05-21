@@ -177,7 +177,7 @@ class HubGui:
 
     def _handle_sockets(self):
         self._reset_flags()
-        readable, writable, errored = select.select(self.read_list, self.write_list, self.err_list)
+        readable, writable, errored = select.select(self.read_list, self.write_list, self.err_list, 0.05)
 
         for sock in errored:
             # re-establish connection
@@ -191,7 +191,7 @@ class HubGui:
             elif topic == SCREENSHOT_TOPIC:
                 self.screenshot = True # handle screenshot
 
-            print("Result Input: %s" % result)
+            # print("Result Input: %s" % result)
 
         self._process_results()
 
@@ -199,7 +199,7 @@ class HubGui:
             message = self._get_message()
             for sock in writable:
                 sock.send_string("%s%s" % (HUB_TOPIC, message))
-            print("Message Output: %s" % message)
+            # print("Message Output: %s" % message)
 
         #print("Another Sample!!!")
         return
