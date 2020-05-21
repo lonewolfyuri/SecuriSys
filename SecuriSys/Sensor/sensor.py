@@ -6,11 +6,11 @@ import time
 
 class Sensor:
     def __init__(self, time = 300):
-        self.motionSen = 21 ## GPIO pin of motion sen
-        self.lightSen = 16  ## GPIO pin of light sen
-        self.soundSen = 24  ## GPIO pin of sound sen
-        self.gasSen= 18     ## GPIO pin of gas sen
-        self.vibrateSen = 4 ## GPIO pin of vibrate sen
+        self.motionSen = 21   ## GPIO pin of motion sen
+        self.lightSen = 16   ## GPIO pin of light sen
+        self.soundSen = 24    ## GPIO pin of sound sen
+        self.gasSen= 18 ;     ## GPIO pin of gas sen
+        self.vibrateSen = 4; ## GPIO pin of vibrate sen
 
         self._init_sensors()
         self._init_events(time)
