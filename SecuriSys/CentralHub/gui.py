@@ -181,7 +181,7 @@ class HubGui:
         self._reset_flags()
         readable, writable, errored = select.select(self.read_list, self.write_list, self.err_list, 0.05)
 
-        print("Select Sockets")
+        print("Select Sockets: %d | %d | %d" % (len(readable), len(writable), len(errored)))
 
         for sock in errored:
             # re-establish connection
@@ -194,7 +194,7 @@ class HubGui:
                 self._handle_sensor(result[5:]) # handle sensor data
             elif topic == SCREENSHOT_TOPIC:
                 self.screenshot = True # handle screenshot
-
+            print("Read from a Socket")
             # print("Result Input: %s" % result)
 
         print("Read Sockets")
@@ -205,6 +205,7 @@ class HubGui:
             message = self._get_message()
             for sock in writable:
                 sock.send_string("%s%s" % (HUB_TOPIC, message))
+            print("Wrote to a Socket")
             # print("Message Output: %s" % message)
 
         print("Write Sockets")
