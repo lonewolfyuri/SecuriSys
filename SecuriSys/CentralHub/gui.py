@@ -56,7 +56,8 @@ class HubGui:
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.sens_topic)
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.surv_topic)
 
-        fcntl.fcntl(self.sub_socket, fcntl.F_SETFL, os.O_NONBLOCK)
+        #fcntl.fcntl(self.sub_socket, fcntl.F_SETFL, os.O_NONBLOCK)
+        self.sub_socket.setblocking(False)
         self.pub_socket.bind("tcp://*:%s" % self.fog_port)
 
         self.read_list = [self.sub_socket]
@@ -198,12 +199,10 @@ class HubGui:
                     self.screenshot = True # handle screenshot
                 print("Read from a Socket")
                 # print("Result Input: %s" % result)
-            except socket.error as err:
-                errno = err.args[0]
-                if errno == errno.EAGAIN or errno == errno.EWOULDBLOCK:
-                    print("Didn't read from a Socket")
-                else:
-                    print(err)
+            except socket.error:
+                print("Didn't read from a Socket")
+            except socket.timeout:
+                print("Didn't read from a Socket")
 
         print("Read Sockets")
         self._process_results()
