@@ -56,8 +56,6 @@ class HubGui:
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.sens_topic)
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.surv_topic)
 
-        #fcntl.fcntl(self.sub_socket, fcntl.F_SETFL, os.O_NONBLOCK)
-        self.sub_socket.setblocking(False)
         self.pub_socket.bind("tcp://*:%s" % self.fog_port)
 
         self.read_list = [self.sub_socket]
@@ -191,7 +189,7 @@ class HubGui:
 
         for sock in readable:
             try:
-                result = sock.recv()
+                result = sock.recv(flags=zmq.NOBLOCK)
                 topic = result[0:5]
                 if topic == SENSOR_TOPIC:
                     self._handle_sensor(result[5:]) # handle sensor data
