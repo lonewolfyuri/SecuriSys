@@ -460,9 +460,11 @@ class HubGui:
 
     def _sound_alarm(self):
         self.alarm = True
+        print("Alarm is on!")
 
     def _stop_alarm(self):
         self.alarm = False
+        print("Alarm is off!")
 
     def display(self):
         self.app.display()
