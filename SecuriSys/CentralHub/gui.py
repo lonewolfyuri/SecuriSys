@@ -424,6 +424,8 @@ class HubGui:
             else:
                 self.failed += 1
                 self._wrong_code()
+                if self.prev_state == "armed" and self.failed >= 5 and not self.alarm:
+                    self._sound_alarm()
         elif self.state == "init":
             if len(self.encrypt) >= 4:
                 self._encrypt_code()
