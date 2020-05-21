@@ -29,6 +29,7 @@ class HubGui:
 
         self.failed = 0
         self.alarm = False
+        self.timer = 0
 
         self.encrypt = "" # encrypted code to verify against input code
         self.code = "" # input code to verify aginst encrypted code
@@ -177,12 +178,9 @@ class HubGui:
 
     def _handle_sockets(self):
         # print("Handle Sockets")
-
         self._reset_flags()
         readable, writable, errored = select.select(self.read_list, self.write_list, self.err_list, 0.05)
-
         # print("Select Sockets: %d | %d | %d" % (len(readable), len(writable), len(errored)))
-
         for sock in errored:
             # re-establish connection
             continue
@@ -203,14 +201,17 @@ class HubGui:
 
         # print("Read Sockets")
         self._process_results()
-
         if self.alarm:
+            if self.timer >= 20:
+                self.timer = 0
+                self.minute = True
+            else:
+                self.timer += 1
             message = self._get_message()
             for sock in writable:
                 sock.send_string("%s%s" % (HUB_TOPIC, message))
             # print("Wrote to a Socket")
             # print("Message Output: %s" % message)
-
         # print("Write Sockets")
 
     def _reset_flags(self):
@@ -230,6 +231,11 @@ class HubGui:
 
     def _get_message(self):
         result = ""
+
+        if self.minute:
+            result += '1'
+        else:
+            result += '0'
 
         if self.screenshot:
             result += '1'
@@ -471,11 +477,15 @@ class HubGui:
 
     def _sound_alarm(self):
         self.alarm = True
+        self.timer = 0
+        self.minute = False
         pygame.mixer.music.play(9999999, 0.0)
         print("Alarm is on!")
 
     def _stop_alarm(self):
         self.alarm = False
+        self.timer = 0
+        self.minute = False
         pygame.mixer.music.stop()
         print("Alarm is off!")
 
