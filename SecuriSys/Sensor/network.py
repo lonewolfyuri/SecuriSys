@@ -2,20 +2,18 @@ import zmq
 import random
 import sys
 import time
-import sensor
+from sensor import Sensor
 
 port = "6000"
 if len(sys.argv) > 1:
-    port =  sys.argv[1]
-    int(port)
+    port = sys.argv[1]
 
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
 socket.bind("tcp://*:%s" % port)
 
-sen = sensor.Sensor()
+sen = Sensor()
 topic = "10002"
-
 
 def binarySensor(senVals):
     vals = ""
@@ -28,4 +26,4 @@ while True:
     messagedata = binarySensor(senVals);
     print (topic+messagedata)
     socket.send_string((topic+messagedata))
-    time.sleep(1)
+    time.sleep(0.5)
