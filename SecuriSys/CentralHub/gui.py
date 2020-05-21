@@ -197,9 +197,7 @@ class HubGui:
                     self.screenshot = True # handle screenshot
                 print("Read from a Socket")
                 # print("Result Input: %s" % result)
-            except socket.error:
-                print("Didn't read from a Socket")
-            except socket.timeout:
+            except zmq.Again:
                 print("Didn't read from a Socket")
 
         print("Read Sockets")
