@@ -204,7 +204,6 @@ class HubGui:
         # print("Read Sockets")
         self._process_results()
 
-
         if self.alarm:
             message = self._get_message()
             for sock in writable:
@@ -213,7 +212,6 @@ class HubGui:
             # print("Message Output: %s" % message)
 
         # print("Write Sockets")
-        # print("Another Sample!!!")
 
     def _reset_flags(self):
         self.screenshot = False
@@ -415,7 +413,7 @@ class HubGui:
         self.encrypt = Fernet(self.key).encrypt(self.encrypt.encode())
 
     def _check_code(self):
-        return self.code.encode() == Fernet(self.key).decrypt(self.encrypt)
+        return self.encrypt == Fernet(self.key).encrypt(self.code)
 
     def _handle_arm(self):
         print(self.state)
