@@ -49,8 +49,8 @@ class HubGui:
         self.sub_socket = self.context.socket(zmq.SUB)
         self.pub_socket = self.context.socket(zmq.PUB)
 
-        self.sub_socket.connect("%s:%s" % self.sens_addr, self.sens_port)
-        self.sub_socket.connect("%s:%s" % self.surv_addr, self.surv_port)
+        self.sub_socket.connect("%s:%s" % (self.sens_addr, self.sens_port))
+        self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
 
         self.sub_socket.setsockopt(zmq.SUBSCRIBE, self.sens_topic)
         self.sub_socket.setsockopt(zmq.SUBSCRIBE, self.surv_topic)
@@ -197,7 +197,7 @@ class HubGui:
         if self.alarm:
             message = self._get_message()
             for sock in writable:
-                sock.send("%s%s" % HUB_TOPIC, message)
+                sock.send("%s%s" % (HUB_TOPIC, message))
             print("Message Output: %s" % message)
 
         #print("Another Sample!!!")
