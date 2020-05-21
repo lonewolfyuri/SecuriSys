@@ -176,6 +176,7 @@ class HubGui:
         self.sampling_widget.repeat(50, self._handle_sockets)
 
     def _handle_sockets(self):
+        print("Handle Sockets")
         self._reset_flags()
         readable, writable, errored = select.select(self.read_list, self.write_list, self.err_list, 0.05)
 
