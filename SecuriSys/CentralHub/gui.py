@@ -1,7 +1,7 @@
 import guizero as gz
 import tkinter as tk
 from cryptography.fernet import Fernet
-import sys, zmq, select
+import os, sys, zmq, select, pygame
 
 # self.state values: "init" | "input" | "armed" | "disarmed"
 
@@ -38,6 +38,7 @@ class HubGui:
         self.app = gz.App(bg="#171717", title="SecuriSys Central Hub", width=w, height=h) # the guizero app object
 
         self._init_net()
+        self._init_music()
         self._init_app()
 
     def _init_net(self):
@@ -61,6 +62,11 @@ class HubGui:
         self.read_list = [self.sub_socket]
         self.write_list = [self.pub_socket]
         self.err_list = [self.sub_socket, self.pub_socket]
+
+    def _init_music(self):
+        pygame.mixer.init()
+        pygame.mixer.music.load("resources/alarm.mp3")
+        pygame.mixer.music.set_volume(1.0)
 
     def _init_app(self):
         self.app.set_full_screen()
@@ -396,15 +402,9 @@ class HubGui:
         self._change_message("Wrong Code!!!")
 
     def _encrypt_code(self):
-        #print(self.encrypt)
         self.encrypt = Fernet(self.key).encrypt(self.encrypt.encode())
-        #print(self.encrypt)
 
     def _check_code(self):
-        #print(self.encrypt)
-        #decrypt = Fernet(self.key).decrypt(self.encrypt)
-        #print(decrypt)
-        #print(self.code.encode())
         return self.code.encode() == Fernet(self.key).decrypt(self.encrypt)
 
     def _handle_arm(self):
@@ -418,6 +418,7 @@ class HubGui:
                     self._change_state("disarmed")
                     self._toggle_arm_button()
                 else:
+                    self._sound_alarm()
                     self._change_message("Armed")
                     self._change_state("armed")
                     self._toggle_arm_button()
@@ -460,10 +461,12 @@ class HubGui:
 
     def _sound_alarm(self):
         self.alarm = True
+        pygame.mixer.music.play(9999999, 0.0)
         print("Alarm is on!")
 
     def _stop_alarm(self):
         self.alarm = False
+        pygame.mixer.music.stop()
         print("Alarm is off!")
 
     def display(self):
