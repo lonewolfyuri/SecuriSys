@@ -1,7 +1,7 @@
 import guizero as gz
 import tkinter as tk
 from cryptography.fernet import Fernet
-import os, sys, zmq, select, pygame
+import zmq, select, pygame, fcntl, os, socket
 
 # self.state values: "init" | "input" | "armed" | "disarmed"
 
@@ -56,6 +56,7 @@ class HubGui:
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.sens_topic)
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.surv_topic)
 
+        fcntl.fcntl(self.sub_socket, fcntl.F_SETFL, os.O_NONBLOCK)
         self.pub_socket.bind("tcp://*:%s" % self.fog_port)
 
         self.read_list = [self.sub_socket]
@@ -188,14 +189,21 @@ class HubGui:
             continue
 
         for sock in readable:
-            result = sock.recv()
-            topic = result[0:5]
-            if topic == SENSOR_TOPIC:
-                self._handle_sensor(result[5:]) # handle sensor data
-            elif topic == SCREENSHOT_TOPIC:
-                self.screenshot = True # handle screenshot
-            print("Read from a Socket")
-            # print("Result Input: %s" % result)
+            try:
+                result = sock.recv()
+                topic = result[0:5]
+                if topic == SENSOR_TOPIC:
+                    self._handle_sensor(result[5:]) # handle sensor data
+                elif topic == SCREENSHOT_TOPIC:
+                    self.screenshot = True # handle screenshot
+                print("Read from a Socket")
+                # print("Result Input: %s" % result)
+            except socket.error as err:
+                errno = err.args[0]
+                if errno == errno.EAGAIN or errno == errno.EWOULDBLOCK:
+                    print("Didn't read from a Socket")
+                else:
+                    print(err)
 
         print("Read Sockets")
         self._process_results()
