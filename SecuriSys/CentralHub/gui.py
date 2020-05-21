@@ -28,6 +28,7 @@ class HubGui:
         self.key = Fernet.generate_key() # key for passcode enc/dec
 
         self.failed = 0
+        self.alarm = False
 
         self.encrypt = "" # encrypted code to verify against input code
         self.code = "" # input code to verify aginst encrypted code
