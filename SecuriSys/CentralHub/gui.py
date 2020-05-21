@@ -176,12 +176,12 @@ class HubGui:
         self.sampling_widget.repeat(50, self._handle_sockets)
 
     def _handle_sockets(self):
-        print("Handle Sockets")
+        # print("Handle Sockets")
 
         self._reset_flags()
         readable, writable, errored = select.select(self.read_list, self.write_list, self.err_list, 0.05)
 
-        print("Select Sockets: %d | %d | %d" % (len(readable), len(writable), len(errored)))
+        # print("Select Sockets: %d | %d | %d" % (len(readable), len(writable), len(errored)))
 
         for sock in errored:
             # re-establish connection
@@ -195,12 +195,13 @@ class HubGui:
                     self._handle_sensor(result[5:]) # handle sensor data
                 elif topic == SCREENSHOT_TOPIC:
                     self.screenshot = True # handle screenshot
-                print("Read from a Socket")
+                # print("Read from a Socket")
                 # print("Result Input: %s" % result)
             except zmq.Again:
-                print("Didn't read from a Socket")
+                # print("Didn't read from a Socket")
+                continue
 
-        print("Read Sockets")
+        # print("Read Sockets")
         self._process_results()
 
 
@@ -208,11 +209,11 @@ class HubGui:
             message = self._get_message()
             for sock in writable:
                 sock.send_string("%s%s" % (HUB_TOPIC, message))
-            print("Wrote to a Socket")
+            # print("Wrote to a Socket")
             # print("Message Output: %s" % message)
 
-        print("Write Sockets")
-        #print("Another Sample!!!")
+        # print("Write Sockets")
+        # print("Another Sample!!!")
 
     def _reset_flags(self):
         self.screenshot = False
