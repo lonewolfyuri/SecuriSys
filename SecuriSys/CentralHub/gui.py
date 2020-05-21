@@ -45,7 +45,7 @@ class HubGui:
         self.sens_topic = SENSOR_TOPIC
         self.surv_topic = SCREENSHOT_TOPIC
 
-        self.context = zmq.Contect()
+        self.context = zmq.Context()
         self.sub_socket = self.context.socket(zmq.SUB)
 
         self.pub_socket = self.context.socket(zmq.PUB)
@@ -199,7 +199,7 @@ class HubGui:
         if self.alarm:
             message = self._get_message()
             for sock in writable:
-                sock.send("%d%d" % HUB_TOPIC, message)
+                sock.send("%s%s" % HUB_TOPIC, message)
             print("Message Output: %s" % message)
 
         #print("Another Sample!!!")
