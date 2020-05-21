@@ -198,7 +198,7 @@ class HubGui:
         if self.alarm:
             message = self._get_message()
             for sock in writable:
-                sock.send("%s%s" % (HUB_TOPIC, message))
+                sock.send_string("%s%s" % (HUB_TOPIC, message))
             print("Message Output: %s" % message)
 
         #print("Another Sample!!!")
