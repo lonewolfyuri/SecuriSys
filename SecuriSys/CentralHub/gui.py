@@ -47,9 +47,7 @@ class HubGui:
 
         self.context = zmq.Context()
         self.sub_socket = self.context.socket(zmq.SUB)
-
         self.pub_socket = self.context.socket(zmq.PUB)
-        self.pub_socket.setblocking(False)
 
         self.sub_socket.connect("%s:%s" % self.sens_addr, self.sens_port)
         self.sub_socket.connect("%s:%s" % self.surv_addr, self.surv_port)
