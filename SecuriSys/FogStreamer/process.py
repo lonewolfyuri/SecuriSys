@@ -1,4 +1,4 @@
-import sys, zmq, select, time
+import sys, zmq, select, time, socket
 from datetime import datetime
 from twilio.rest import Client
 
@@ -8,12 +8,15 @@ SENSOR_TOPIC = "10002"
 SCREENSHOT_TOPIC = "10003"
 FOOTAGE_TOPIC = "10004"
 
+DEVICE_ID = ""
+
 HOUR = 3600 # one hour = 60 minutes = 3600 seconds (time.time() is in seconds)
 
 class Fog:
-    def __init__(self, emergency_contact = "+19495298086", hub_port = "5000", surv_port = "7000", hub_addr = "tcp://localhost", surv_addr = "tcp://localhost"):
+    def __init__(self, emergency_contact = "+19495298086", hub_port = "5000", surv_port = "7000", cloud_port = "10000", hub_addr = "tcp://localhost", surv_addr = "tcp://localhost"):
         self.hub_port = hub_port
         self.surv_port = surv_port
+        self.cloud_port = cloud_port
 
         self.hub_addr = hub_addr
         self.surv_addr = surv_addr
@@ -32,6 +35,7 @@ class Fog:
 
         self.context = zmq.Context()
         self.sub_socket = self.context.socket(zmq.SUB)
+        self.pub_socket = self.context.socket(zmq.PUB)
 
         self.sub_socket.connect("%s:%s" % (self.hub_addr, self.hub_port))
         self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
@@ -40,13 +44,27 @@ class Fog:
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.screenshot_topic)
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.footage_topic)
 
+        self.pub_socket.bind("tcp://*:%s" % self.cloud_port)
+
         self.read_list = [self.sub_socket]
-        self.write_list = []
-        self.err_list = [self.sub_socket]
+        self.write_list = [self.pub_socket]
+        self.err_list = [self.sub_socket, self.pub_socket]
 
     def _init_footage(self):
         self.frames = []
         self.start = None
+        self.datetime = datetime.now()
+
+    def _make_message(self, device_id, action, data=''):
+        if data:
+            return '{{ "device" : "%s", "action":"%s", "data" : "%s" }}' % (device_id, action, data)
+        else:
+            return '{{ "device" : "%s", "action":"%s"}}' % (device_id, action)
+
+    def _send_command(self, message, log=True):
+        if log:
+            print('sending: "{}"'.format(message), file=sys.stderr)
+        self.pub_socket.send(message.encode('utf8'))
 
     def _process_hub(self, payload):
         self.minute = payload[0] == '1'
@@ -63,7 +81,8 @@ class Fog:
 
     def _ship_hub(self):
         # figure out how to push latest reading to the cloud
-        return
+        message = self._make_message(DEVICE_ID, 'hub', 'minute=%b, screenshot=%b, motion=%b, light=%b, sound=%b, gas=%b, vibration=%b' % (self.minute, self.screenshot, self.motion, self.light, self.sound, self.gas, self.vibration))
+        self._send_command(message, False)
 
     def _handle_hub(self, payload):
         self._process_hub(payload)
@@ -75,7 +94,8 @@ class Fog:
 
     def _ship_screenshot(self, payload):
         # figure out how to push screenshot to the cloud
-        return
+        message = self._make_message(DEVICE_ID, 'image', 'payload=%s' % payload)
+        self._send_command(message, False)
 
     def _split_video(self, payload):
         # split payload into frames
@@ -92,15 +112,14 @@ class Fog:
 
     def _ship_video(self):
         # figure out how to push video to the cloud
-        return
+        message = self._make_message(DEVICE_ID, 'video')
+        self._send_command(message, False)
 
     def _add_footage(self, payload):
         if self.start is None:
             self.start = time.time()
-
         # split payload into frames
         self._split_video(payload)
-
         # if it has been an hour: ship video to cloud and erase
         if time.time() - self.start >= HOUR:
             # figure out how to convert frames onto video
