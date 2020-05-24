@@ -42,7 +42,6 @@ class Fog:
 
         self.context = zmq.Context()
         self.sub_socket = self.context.socket(zmq.SUB)
-        #self.pub_socket = self.context.socket(zmq.PUB)
 
         self.sub_socket.connect("%s:%s" % (self.hub_addr, self.hub_port))
         self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
@@ -54,8 +53,7 @@ class Fog:
         #self.pub_socket.bind("tcp://*:%s" % self.cloud_port)
 
         self.read_list = [self.sub_socket]
-        # self.write_list = [self.pub_socket]
-        self.err_list = [self.sub_socket, self.pub_socket]
+        self.err_list = [self.sub_socket]
 
     def _init_cloud(self):
         # figure out credentials/auth for client
