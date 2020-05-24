@@ -42,6 +42,9 @@ vid_topic = 10004
 frame_width = 1280
 frame_height = 720
 
+videoFramesStr = ""
+videoCounter = 0
+
 
 #**fog**
 currentDT = datetime.datetime.now()
@@ -60,8 +63,7 @@ video_name_str = "video_y{0}m{1:02d}d{2:02d}_h{3:02d}m{4:02d}s{5:02d}.avi".forma
 outVideo = cv2.VideoWriter('videos/'+video_name_str, cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
 
 
-multiImageString = None
-videoCounter = 0
+
 
 
 # Define VideoStream class to handle streaming of video from webcam in separate processing thread
@@ -268,16 +270,22 @@ while True:
         data_encode = np.array(img_encode)
         imgStr = data_encode.tostring()
 
-
-        messagedata = imgStr
-
-        #only sendin 1 image this time
-        socket.send_string("%d%s" % (vid_topic, messagedata))
-        
         if (send_ss_topic):
-            socket.send_string("%d%s" % (ss_topic, messagedata))
+            socket.send_string("%d%s" % (ss_topic, imgStr))
 
-
+        
+        ##only sendin 1 image this time
+        #socket.send_string("%d%s" % (vid_topic, messagedata))
+        
+        videoFramesStr = "%s\n" % (imgStr)
+        videoCounter+=1
+        
+        if (videoCounter == 10):#if we ahve 10 images, we will push them all!
+            socket.send_string("%d%s" % (vid_topic, videoFramesStr))
+            videoFramesStr = ""
+            videoCounter=0
+            
+            
                 
   
             
