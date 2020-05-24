@@ -1,6 +1,7 @@
 import sys, zmq, select, time, socket
 from datetime import datetime
 from twilio.rest import Client
+from gcloud import storage
 
 # Topic Filters: "10001" - Central Hub | "10002" - Sensors | "10003" - Screenshots | "10004" - Footage
 HUB_TOPIC = "10001"
@@ -23,9 +24,11 @@ class Fog:
 
         self.text_sent = False
         self.emergency_contact = emergency_contact
-        self.client = Client("ACfb45069384449efc0a19acb6ea88d359", "0046fd99e4b7e2c5291a48faf8bce35d")
+        self.text_client = Client("ACfb45069384449efc0a19acb6ea88d359", "0046fd99e4b7e2c5291a48faf8bce35d")
 
         self._init_net()
+        self._init_cloud()
+        self._init_hub()
         self._init_footage()
 
     def _init_net(self):
@@ -44,27 +47,28 @@ class Fog:
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.screenshot_topic)
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.footage_topic)
 
-        self.pub_socket.bind("tcp://*:%s" % self.cloud_port)
+        #self.pub_socket.bind("tcp://*:%s" % self.cloud_port)
 
         self.read_list = [self.sub_socket]
         self.write_list = [self.pub_socket]
         self.err_list = [self.sub_socket, self.pub_socket]
 
+    def _init_cloud(self):
+        # figure out credentials/auth for client
+        self.cloud_client = storage.Client() # options: project, credentials, http
+        self.hub_bucket = self.cloud_client.get_bucket('securisys-hub')
+        self.image_bucket = self.cloud_client.get_bucket('securisys-image')
+        self.footage_bucket = self.cloud_client.get_bucket('securisys-footage')
+
+    def _init_hub(self):
+        self.hub_string = ""
+        self.first_read = None
+        self.hub_dt = datetime.now()
+
     def _init_footage(self):
         self.frames = []
         self.start = None
-        self.datetime = datetime.now()
-
-    def _make_message(self, device_id, action, data=''):
-        if data:
-            return '{{ "device" : "%s", "action":"%s", "data" : "%s" }}' % (device_id, action, data)
-        else:
-            return '{{ "device" : "%s", "action":"%s"}}' % (device_id, action)
-
-    def _send_command(self, message, log=True):
-        if log:
-            print('sending: "{}"'.format(message), file=sys.stderr)
-        self.pub_socket.send(message.encode('utf8'))
+        self.footage_dt = datetime.now()
 
     def _process_hub(self, payload):
         self.minute = payload[0] == '1'
@@ -74,28 +78,53 @@ class Fog:
         self.sound = payload[4] == '1'
         self.gas = payload[5] == '1'
         self.vibration = payload[6] == '1'
+        self.hub_string += "Minute: %r | Screen: %r | Motion: %r | Light: %r | Sound: %r | Gas: %r | Vibration: %r\n" % (self.minute, self.screenshot, self.motion, self.light, self.sound, self.gas, self.vibration)
 
     def _send_text(self, message="Emergency! There has been a break-in!"):
         # alert "authorities" of emergency
-        self.client.messages.create(to=self.emergency_contact, from_="+19496494383", body=message)
+        self.text_client.messages.create(to=self.emergency_contact, from_="+19496494383", body=message)
+
+    def _make_file(self):
+        # converts string to txt as output/hub.txt
+        with open('output/hub.txt') as f:
+            f.write(self.hub_string)
 
     def _ship_hub(self):
         # figure out how to push latest reading to the cloud
-        message = self._make_message(DEVICE_ID, 'hub', 'minute=%b, screenshot=%b, motion=%b, light=%b, sound=%b, gas=%b, vibration=%b' % (self.minute, self.screenshot, self.motion, self.light, self.sound, self.gas, self.vibration))
-        self._send_command(message, False)
+        blob = self.image_bucket.get_blob('%d-%d-%d/%d_%d_%d.txt' % (self.hub_dt.month, self.hub_dt.day, self.hub_dt.year, self.hub_dt.hour, self.hub_dt.minute,self.hub_dt.second))
+        blob.upload_from_filename(filename='output/hub.txt')
+        return
 
     def _handle_hub(self, payload):
+        if self.first_read is None:
+            self.first_read = time.time()
+        # process the hub reading
         self._process_hub(payload)
         if self.minute and not self.text_sent:
             self._send_text()
         if not self.minute:
             self.text_sent = False
-        self._ship_hub()
+        if time.time() - self.first_read >= HOUR:
+            # convert string to txt file
+            self._make_file()
+            # push txt file to cloud
+            self._ship_hub()
+            # re-init hub for new hour
+            self._init_hub()
 
-    def _ship_screenshot(self, payload):
+    def _make_image(self, payload):
+        # converts image to jpeg as output/image.jpeg
+        return
+
+    def _ship_screenshot(self):
         # figure out how to push screenshot to the cloud
-        message = self._make_message(DEVICE_ID, 'image', 'payload=%s' % payload)
-        self._send_command(message, False)
+        dtime = datetime.now()
+        blob = self.image_bucket.get_blob('%d-%d-%d/%d_%d_%d.jpeg' % (dtime.month, dtime.day, dtime.year, dtime.hour, dtime.minute, dtime.second))
+        blob.upload_from_filename(filename='output/image.jpeg')
+
+    def _handle_screenshot(self, payload):
+        self._make_image(payload)
+        self._ship_screenshot()
 
     def _split_video(self, payload):
         # split payload into frames
@@ -107,15 +136,15 @@ class Fog:
             self.frames.append(frame)
 
     def _make_video(self):
-        # convert self.frames into video
+        # convert self.frames into video at output/video.mp4
         return
 
     def _ship_video(self):
         # figure out how to push video to the cloud
-        message = self._make_message(DEVICE_ID, 'video')
-        self._send_command(message, False)
+        blob = self.image_bucket.get_blob('%d-%d-%d/%d_%d_%d.mp4' % (self.footage_dt.month, self.footage_dt.day, self.footage_dt.year, self.footage_dt.hour, self.footage_dt.minute, self.footage_dt.second))
+        blob.upload_from_filename(filename='output/video.mp4')
 
-    def _add_footage(self, payload):
+    def _handle_footage(self, payload):
         if self.start is None:
             self.start = time.time()
         # split payload into frames
@@ -132,11 +161,9 @@ class Fog:
     def run(self):
         while True:
             readable, writable, errored = select.select(self.read_list, self.write_list, self.err_list)
-
             for sock in errored:
                 # handle connection error / re-establish connection
                 continue
-
             for sock in readable:
                 try:
                     result = sock.recv(flags=zmq.NOBLOCK)
@@ -144,16 +171,12 @@ class Fog:
                     if topic == HUB_TOPIC:
                         self._handle_hub(result[5:])
                     elif topic == SCREENSHOT_TOPIC:
-                        self._ship_screenshot(result[5:])
+                        self._handle_screenshot(result[5:])
                     elif topic == FOOTAGE_TOPIC:
-                        self._add_footage(result[5:])
+                        self._handle_footage(result[5:])
                 except zmq.Again as err:
                     print(err)
                     continue
-
-            for sock in writable:
-                # dead code for now.
-                continue
 
 
 if __name__ == "__main__":

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "securisyscloud",
+  "private_key_id": "e90befcf7702bcd11216e40d53fc8f439cd3e698",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC9qWjWDS7iMCq3\n5RpvnU5FS5Yz+NydHN8ZmgWTKM5MTbjR0553uZJ+ePSVuk6m4nUlsrInmaA0wb9a\nUxRcAQmDQ+XP5a13HRfgPvzEhNRZiAA7f1XMZaFpDEYWiteO3n2xSM32xMHBEGU7\newqXvqLCeBxlPxxR4C4h58+WDty9srPq24QxTQT5gvAr2Z/lTVUAp6cvsNRFpgJp\nwh+ZxnEr8Kus38m/7K4FVpG0VYlNI9BnW4h7ICxk2bBpMhrF3NnzQAPrsAechaSA\nIdhtHmdzNnWn3/Y3jaw0WpKBdrcGfloIjUwzaOZWR8rOk9rmzm9STGzSkF8X5r2E\n/IU+JUfpAgMBAAECggEAHh02gfo2OKrTium2dgTA8fFrqCqPrjtF1JT8j/OkN0Bb\nTqcDsS3cFqG88Bh/YYcbzlWzwjmQfZ/1HUc2Ddpfo3crQlnNCQMruyrfy+eX/J6Y\nBC/BNJg/II9W15XJs9ZxmFh01Nruir7q2/QQPVeDFKP+mjgtlnXPzV63EAlMalVz\nQC1SIRaDJ+Vk9+Kq54HaIMhbNegcP6zzH8MVHdmrI9heMtopl5x67UenTKy1YUc2\nWV8tu4fds47DmUe0l6pwV4QzgbDScBaAUyqON0WFhjo/yzZTAmVGZ0QQLk/D8LuB\np8/slp+kxVDm0cW+8pAsNUL74HOevlU6qXQPqfvMqwKBgQDrKb2o3yOA13wts5Cp\nJNSXw9nyWBCk4jikkwF4t/6lPT5GoA1bfyX6NNfJzG/qFCcksmkbOWEBJf8R9q4H\nVqqWrZaGcEfVEc/sry+R0GdVJ3pBpYRGvQHwonQrS5CjLbmGuQeJ41NEInx6ayDI\nB6ULxJrd5KllNupb0H1nSFBHnwKBgQDOd41RqCU0ck/8SfxPfVPdxh4gBEgxl2W0\nON3l4D+GSgFkuIL9Ss7IeCHvx/KPoS9LJtfrjEqOSQHQSPK6kYK8AFu8fUfs2QbA\n8o0ONYawdAvc0WsolCUdwPvyf+XElagzPJbxC+U/vVRHrvVXhvMhsUup0Pqj59my\nmUo3dW7jdwKBgQClfIc6GmTam0mIw69OSFvOvQVXlH+J+KRRtB25/QkW8SUtAB7G\nP5DTJXKhUNuEx0/QdDig7t0DuOBpnMVU5rk/NcMSslrqZxGCBrocC6Nb+l7/aWHP\ngdymoTvM5+1N17SSSQ00DKQg83/TiiXUfgS4Zk9xTSOj1WRQ3kQRdYMBEwKBgEJW\ndUiUTwfv5rU4DGJ58TVjj5BX795HN71VPC69A4whQRtckXHS1Gfi+XxycQQnFOv/\nmgart9TJrlR+68Z4NFo1f0QruK1n+dyK0jmLhzAwyRL1EooiN168//alk2y7bSSx\nRgpC+TCmo2q400mBKaNctOPmKnH5b6AL0qXJDIz3AoGBAK1TwGIBdJQpDWj6Cm/k\nxVGW/gO7GDEs/aaC3tODvAUVW7ZK/BG9AHmvGyYa85HtGgnZWMRbeb+acTyOshvJ\ntkVtZleD7bcSq5Z6YPquqgIyfPtCHGj/Nu09dDbsiyxijrJqijjTWDTJRg6dJgYY\nDTnZOoQgQCMOfLKAEJO0ImcI\n-----END PRIVATE KEY-----\n",
+  "client_email": "securisys-storage@securisyscloud.iam.gserviceaccount.com",
+  "client_id": "101929348325917595269",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/securisys-storage%40securisyscloud.iam.gserviceaccount.com"
+}
