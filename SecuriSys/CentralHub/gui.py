@@ -432,7 +432,7 @@ class HubGui:
         self.encrypt = Fernet(self.key).encrypt(self.encrypt.encode())
 
     def _check_code(self):
-        return self.encrypt == Fernet(self.key).encrypt(self.code)
+        return self.code == Fernet(self.key).decrypt(self.encrypt)
 
     def _handle_arm(self):
         print(self.state)
