@@ -5,7 +5,7 @@
 
 ######## Webcam Object Detection Using Tensorflow-trained Classifier #########
 #
-# Author: Evan Juras, modified by Benjamin Nolpho Group 6 CS190
+# Author: Evan Juras, modified by Benjamin Nolpho Group6 CS190
 # Description: 
 # This program uses a TensorFlow Lite model to perform object detection on a live webcam
 # feed. It draws boxes and scores around the objects of interest in each frame from the
@@ -32,12 +32,32 @@ import sys
 import time
 
 import base64
-
+from os import path
+import datetime
 
 port = "7000"
+ss_topic = 10003
+vid_topic = 10004
+
+frame_width = 1280
+frame_height = 720
+
+
+#**fog**
+currentDT = datetime.datetime.now()
+year = currentDT.year
+month = currentDT.month
+day = currentDT.day
+hour = currentDT.hour
+minute = currentDT.minute
+second = currentDT.second
+
+video_name_str = "video_y{0}m{1:02d}d{2:02d}_h{3:02d}m{4:02d}s{5:02d}.avi".format(year,month,day,hour,minute,second)
 
 
 
+###for initial construction
+outVideo = cv2.VideoWriter('videos/'+video_name_str, cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
 
 
 multiImageString = None
@@ -88,8 +108,6 @@ class VideoStream:
 
 # Define and parse input arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--modeldir', help='Folder the .tflite file is located in',
-                    required=True)
 parser.add_argument('--graph', help='Name of the .tflite file, if different than detect.tflite',
                     default='detect.tflite')
 parser.add_argument('--labels', help='Name of the labelmap file, if different than labelmap.txt',
@@ -98,18 +116,16 @@ parser.add_argument('--threshold', help='Minimum confidence threshold for displa
                     default=0.5)
 parser.add_argument('--resolution', help='Desired webcam resolution in WxH. If the webcam does not support the resolution entered, errors may occur.',
                     default='1280x720')
-parser.add_argument('--edgetpu', help='Use Coral Edge TPU Accelerator to speed up detection',
-                    action='store_true')
 
 args = parser.parse_args()
 
-MODEL_NAME = args.modeldir
+MODEL_NAME = "Sample_TFLite_model"
 GRAPH_NAME = args.graph
 LABELMAP_NAME = args.labels
 min_conf_threshold = float(args.threshold)
 resW, resH = args.resolution.split('x')
 imW, imH = int(resW), int(resH)
-use_TPU = args.edgetpu
+use_TPU = True
 
 # Import TensorFlow libraries
 # If tflite_runtime is installed, import interpreter from tflite_runtime, else import from regular tensorflow
@@ -176,7 +192,7 @@ frame_rate_calc = 1
 freq = cv2.getTickFrequency()
 
 # Initialize video stream
-videostream = VideoStream(resolution=(imW,imH),framerate=30).start()
+videostream = VideoStream(resolution=(imW,imH),framerate=10).start()
 time.sleep(1)
 
 
@@ -217,6 +233,8 @@ while True:
 
     # Loop over all detections and draw detection box if confidence is above minimum threshold
     #for i in range(len(scores)):
+    send_ss_topic = False
+    
     for i in range(1):#just loop[ over the person object
         if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
 
@@ -240,93 +258,28 @@ while True:
             cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
             
             if (object_name == "person"):
-                
-                #setup file to be saved
-                print("FOUND PERSON!")
-                filename = "images/recentImage.jpg"
-                cv2.imwrite(filename,frame)
-                
-                #setup image into string to be sent
-                sending_image = cv2.imread("images/recentImage.jpg")
-                #imgStrToSend = cv2.imencode('.jpg', sending_image)[1]
-                img_encode = cv2.imencode('.jpg', frame)[1]
-                data_encode = np.array(img_encode)
-                imgStrToSend = data_encode.tostring()
-               
-                
-                print("type:", type(imgStrToSend), "| imgStrToSend size:", len(imgStrToSend))
-                
-                
-                #for sending the topic+payload.
-                topic = 10003
-                
-                messagedata = imgStrToSend
-                
-                
-                
-                print("found human, image payload size: ", len(messagedata))
-                #print ("%d%s" % (topic, messagedata))
-                socket.send_string("%d%s" % (topic, messagedata))
-                
-                ###FOR CHECKING THE IMAGE###
-                """
-                nparr = np.fromstring(messagedata, np.uint8)
-                remade_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-                
-                cv2.imwrite("images/remadeImage.jpg", remade_img)
-                
-                #make sure both images are smae size of 2764800
-                print("frame size:", frame.size)
-                print("remade size:", remade_img.size)
-                """
-                
+                send_ss_topic = True
                 
                 
             
-                #this should all be outside probably
-                #big super string.
-                #big outer counter. loops from 0to30. Each loop appends to the big mega string.
-                #at 30, it sends the whole string to the 10004 topic and then resets the string to ""
-                #does it all over again next time it sees a person
-                
-        
+        #we just write to the video (10004) but no ss (10003)
         #add image to video string
         img_encode = cv2.imencode('.jpg', frame)[1]
         data_encode = np.array(img_encode)
         imgStr = data_encode.tostring()
-        imgStr = imgStr
+
+
+        messagedata = imgStr
+
+        #only sendin 1 image this time
+        socket.send_string("%d%s" % (vid_topic, messagedata))
         
-        """
-        if (multiImageString == None):
-            multiImageString = imgStr + "\0"
-            
-        else:
-            multiImageString = multiImageString + imgStr
-            
-        """
-        videoCounter +=1
-        
-        ##imgStr = (cv2.imencode('.jpg', frame)[1]).tostring()
-        ##imgStr = "%s" % imgStr
-        ##multiImageString += imgStr
-        ##videoCounter +=1
-        
-        
-        ##send video packet to the cloud
-        if (videoCounter == 10):
-            #we are on the 10th counter meaning that we are gonna send now
-            topic = 10004
-            messagedata = multiImageString
-            ####print("Sending Video Packet with ", str(videoCounter), "images of payload size: ", len(multiImageString))
-            
-            socket.send_string("%d%s" % (topic, messagedata))
-           
-            
-            #reset for new payload and new frames
-            multiImageString = ""
-            videoCounter =0
-            
-            
+        if (send_ss_topic):
+            socket.send_string("%d%s" % (ss_topic, messagedata))
+
+
+                
+  
             
     # Draw framerate in corner of frame
     cv2.putText(frame,'FPS: {0:.2f}'.format(frame_rate_calc),(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)
