@@ -50,7 +50,7 @@ class Fog:
         #self.pub_socket.bind("tcp://*:%s" % self.cloud_port)
 
         self.read_list = [self.sub_socket]
-        self.write_list = [self.pub_socket]
+        # self.write_list = [self.pub_socket]
         self.err_list = [self.sub_socket, self.pub_socket]
 
     def _init_cloud(self):
@@ -160,10 +160,20 @@ class Fog:
 
     def run(self):
         while True:
-            readable, writable, errored = select.select(self.read_list, self.write_list, self.err_list)
-            for sock in errored:
+            readable, writable, errored = select.select(self.read_list, [], self.err_list)
+            if len(errored) > 0:
                 # handle connection error / re-establish connection
-                continue
+                self.sub_socket = self.context.socket(zmq.SUB)
+                self.sub_socket.connect("%s:%s" % (self.hub_addr, self.hub_port))
+                self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
+
+                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.hub_topic)
+                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.screenshot_topic)
+                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.footage_topic)
+
+                self.read_list = [self.sub_socket]
+                self.err_list = [self.sub_socket]
+
             for sock in readable:
                 try:
                     result = sock.recv(flags=zmq.NOBLOCK)

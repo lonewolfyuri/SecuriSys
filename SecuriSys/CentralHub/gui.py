@@ -181,9 +181,21 @@ class HubGui:
         self._reset_flags()
         readable, writable, errored = select.select(self.read_list, self.write_list, self.err_list, 0.05)
         # print("Select Sockets: %d | %d | %d" % (len(readable), len(writable), len(errored)))
-        for sock in errored:
-            # re-establish connection
-            continue
+        if len(errored) > 0:
+            for sock in errored:
+                if sock == self.pub_socket:
+                    self.pub_socket = self.context.socket(zmq.PUB)
+                    self.pub_socket.bind("tcp://*:%s" % self.fog_port)
+                elif sock == self.sub_socket:
+                    self.sub_socket = self.context.socket(zmq.SUB)
+                    self.sub_socket.connect("%s:%s" % (self.sens_addr, self.sens_port))
+                    self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
+
+                    self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.sens_topic)
+                    self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.surv_topic)
+            self.read_list = [self.sub_socket]
+            self.write_list = [self.pub_socket]
+            self.err_list = [self.sub_socket, self.pub_socket]
 
         for sock in readable:
             try:
