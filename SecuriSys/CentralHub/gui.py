@@ -188,6 +188,7 @@ class HubGui:
         print("Select Sockets: %d | %d | %d" % (len(readable), len(writable), len(errored)))
         if len(errored) > 0:
             for sock in errored:
+                print("Fixing a Connection")
                 if sock == self.pub_socket:
                     self.pub_socket = self.context.socket(zmq.PUB)
                     self.pub_socket.bind("tcp://*:%s" % self.fog_port)
@@ -200,6 +201,7 @@ class HubGui:
             self.read_list = [self.sub_socket]
             self.write_list = [self.pub_socket]
             self.err_list = [self.sub_socket, self.pub_socket]
+            print("Connections Fixed")
 
         for sock in readable:
             try:
