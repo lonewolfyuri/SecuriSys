@@ -17,7 +17,7 @@ class Fog:
     def __init__(self, emergency_contact = "+19495298086", hub_port = "5000", surv_port = "7000", cloud_port = "10000", hub_addr = "tcp://localhost", surv_addr = "tcp://localhost"):
         self.hub_port = hub_port
         self.surv_port = surv_port
-        self.cloud_port = cloud_port
+        #self.cloud_port = cloud_port
 
         self.hub_addr = hub_addr
         self.surv_addr = surv_addr
@@ -38,7 +38,7 @@ class Fog:
 
         self.context = zmq.Context()
         self.sub_socket = self.context.socket(zmq.SUB)
-        self.pub_socket = self.context.socket(zmq.PUB)
+        #self.pub_socket = self.context.socket(zmq.PUB)
 
         self.sub_socket.connect("%s:%s" % (self.hub_addr, self.hub_port))
         self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
@@ -167,13 +167,14 @@ class Fog:
             for sock in readable:
                 try:
                     result = sock.recv(flags=zmq.NOBLOCK)
-                    topic = result[0:5]
-                    if topic == HUB_TOPIC:
-                        self._handle_hub(result[5:])
-                    elif topic == SCREENSHOT_TOPIC:
-                        self._handle_screenshot(result[5:])
-                    elif topic == FOOTAGE_TOPIC:
-                        self._handle_footage(result[5:])
+                    if result:
+                        topic = result[0:5]
+                        if topic == HUB_TOPIC:
+                            self._handle_hub(result[5:])
+                        elif topic == SCREENSHOT_TOPIC:
+                            self._handle_screenshot(result[5:])
+                        elif topic == FOOTAGE_TOPIC:
+                            self._handle_footage(result[5:])
                 except zmq.Again as err:
                     print(err)
                     continue

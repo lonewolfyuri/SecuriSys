@@ -188,13 +188,14 @@ class HubGui:
         for sock in readable:
             try:
                 result = sock.recv(flags=zmq.NOBLOCK)
-                topic = result[0:5]
-                if topic == SENSOR_TOPIC:
-                    self._handle_sensor(result[5:]) # handle sensor data
-                elif topic == SCREENSHOT_TOPIC:
-                    self.screenshot = True # handle screenshot
-                # print("Read from a Socket")
-                # print("Result Input: %s" % result)
+                if result:
+                    topic = result[0:5]
+                    if topic == SENSOR_TOPIC:
+                        self._handle_sensor(result[5:]) # handle sensor data
+                    elif topic == SCREENSHOT_TOPIC:
+                        self.screenshot = True # handle screenshot
+                    # print("Read from a Socket")
+                    # print("Result Input: %s" % result)
             except zmq.Again as err:
                 print(err)
                 # print("Didn't read from a Socket")
