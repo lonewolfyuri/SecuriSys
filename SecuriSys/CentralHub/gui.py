@@ -15,14 +15,19 @@ w = 800
 h = 430
 s = 40
 
+HUB_ADDR = "tcp://128.195.64.140"
+SENS_ADDR = "tcp://128.195.79.249"
+SURV_ADDR = "tcp://128.200.205.245"
+FOG_ADDR = "tcp://128.195.77.175"
+
 class HubGui:
-    def __init__(self, sens_port = "6000", surv_port = "7000", fog_port = "8000", sens_addr = "tcp://localhost", surv_addr = "tcp://localhost"):
+    def __init__(self, sens_port = "6000", surv_port = "7000", fog_port = "8000"):
         self.sens_port = sens_port
         self.surv_port = surv_port
         self.fog_port = fog_port
 
-        self.sens_addr = sens_addr
-        self.surv_addr = surv_addr
+        self.sens_addr = SENS_ADDR
+        self.surv_addr = SURV_ADDR
 
         self.message = "   Create New Code   " # message to display in gui
         self.key = Fernet.generate_key() # key for passcode enc/dec

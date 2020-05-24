@@ -13,14 +13,18 @@ DEVICE_ID = ""
 
 HOUR = 3600 # one hour = 60 minutes = 3600 seconds (time.time() is in seconds)
 
+HUB_ADDR = "tcp://128.195.64.140"
+SENS_ADDR = "tcp://128.195.79.249"
+SURV_ADDR = "tcp://128.200.205.245"
+FOG_ADDR = "tcp://128.195.77.175"
+
 class Fog:
-    def __init__(self, emergency_contact = "+19495298086", hub_port = "5000", surv_port = "7000", cloud_port = "10000", hub_addr = "tcp://localhost", surv_addr = "tcp://localhost"):
+    def __init__(self, emergency_contact = "+19495298086", hub_port = "5000", surv_port = "7000"):
         self.hub_port = hub_port
         self.surv_port = surv_port
-        #self.cloud_port = cloud_port
 
-        self.hub_addr = hub_addr
-        self.surv_addr = surv_addr
+        self.hub_addr = HUB_ADDR
+        self.surv_addr = SURV_ADDR
 
         self.text_sent = False
         self.emergency_contact = emergency_contact

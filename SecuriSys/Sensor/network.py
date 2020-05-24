@@ -4,6 +4,11 @@ import sys
 import time
 from sensor import Sensor
 
+HUB_ADDR = "tcp://128.195.64.140"
+SENS_ADDR = "tcp://128.195.79.249"
+SURV_ADDR = "tcp://128.200.205.245"
+FOG_ADDR = "tcp://128.195.77.175"
+
 port = "6000"
 if len(sys.argv) > 1:
     port = sys.argv[1]
