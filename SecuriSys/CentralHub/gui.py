@@ -206,7 +206,7 @@ class HubGui:
                     elif topic == SCREENSHOT_TOPIC:
                         self.screenshot = True # handle screenshot
                     # print("Read from a Socket")
-                    # print("Result Input: %s" % result)
+                    print("Result Input: %s" % result)
             except zmq.Again as err:
                 print(err)
                 # print("Didn't read from a Socket")
