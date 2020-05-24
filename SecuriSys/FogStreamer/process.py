@@ -19,7 +19,7 @@ SURV_ADDR = "tcp://128.200.205.245"
 FOG_ADDR = "tcp://128.195.77.175"
 
 class Fog:
-    def __init__(self, emergency_contact = "+19495298086", hub_port = "5000", surv_port = "7000"):
+    def __init__(self, emergency_contact = "+19495298086", hub_port = "8000", surv_port = "7000"):
         self.hub_port = hub_port
         self.surv_port = surv_port
 

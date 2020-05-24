@@ -21,7 +21,7 @@ SURV_ADDR = "tcp://128.200.205.245"
 FOG_ADDR = "tcp://128.195.77.175"
 
 class HubGui:
-    def __init__(self, sens_port = "6000", surv_port = "7000", fog_port = "8000"):
+    def __init__(self, sens_port = "6000", surv_port = "5000", fog_port = "8000"):
         self.sens_port = sens_port
         self.surv_port = surv_port
         self.fog_port = fog_port
@@ -185,7 +185,7 @@ class HubGui:
         # print("Handle Sockets")
         self._reset_flags()
         readable, writable, errored = select.select(self.read_list, self.write_list, self.err_list, 0.05)
-        # print("Select Sockets: %d | %d | %d" % (len(readable), len(writable), len(errored)))
+        print("Select Sockets: %d | %d | %d" % (len(readable), len(writable), len(errored)))
         if len(errored) > 0:
             for sock in errored:
                 if sock == self.pub_socket:
