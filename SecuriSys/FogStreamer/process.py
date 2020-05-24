@@ -166,11 +166,9 @@ class Fog:
                 self.sub_socket = self.context.socket(zmq.SUB)
                 self.sub_socket.connect("%s:%s" % (self.hub_addr, self.hub_port))
                 self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
-
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.hub_topic)
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.screenshot_topic)
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.footage_topic)
-
                 self.read_list = [self.sub_socket]
                 self.err_list = [self.sub_socket]
 
