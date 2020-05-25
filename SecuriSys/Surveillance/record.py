@@ -36,8 +36,8 @@ from os import path
 import datetime
 
 port = "7000"
-ss_topic = 10003
-vid_topic = 10004
+ss_topic = "10003"
+vid_topic = "10004"
 
 frame_width = 1280
 frame_height = 720
@@ -275,19 +275,31 @@ while True:
         imgStr = data_encode.tostring()
 
         if (send_ss_topic):
-            socket.send_string("%d%s" % (ss_topic, imgStr))
+            ss_packet =bytes(ss_topic, 'utf8') + imgStr
+            socket.send(ss_packet)
+            print("sent", ss_topic)
 
         
         ##only sendin 1 image this time
-        #socket.send_string("%d%s" % (vid_topic, messagedata))
+        vid_packet = bytes(vid_topic, 'utf8') + imgStr
+        socket.send(vid_packet)
+        print("sent", vid_topic)
         
-        videoFramesStr = "%s\n" % (imgStr)
-        videoCounter+=1
         
-        if (videoCounter == 10):#if we ahve 10 images, we will push them all!
-            socket.send_string("%d%s" % (vid_topic, videoFramesStr))
-            videoFramesStr = ""
-            videoCounter=0
+        
+        
+        
+        
+        
+        
+        
+#         videoFramesStr = "%s\n" % (imgStr)
+#         videoCounter+=1
+        
+#         if (videoCounter == 10):#if we ahve 10 images, we will push them all!
+#             socket.send_string("%d%s" % (vid_topic, videoFramesStr))
+#             videoFramesStr = ""
+#             videoCounter=0
             
             
                 
