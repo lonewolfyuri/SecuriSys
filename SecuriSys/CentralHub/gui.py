@@ -71,7 +71,7 @@ class HubGui:
     def _init_music(self):
         pygame.mixer.init()
         pygame.mixer.music.load("resources/alarm.mp3")
-        pygame.mixer.music.set_volume(1.0)
+        pygame.mixer.music.set_volume(0.8)
 
     def _init_app(self):
         self.app.set_full_screen()
@@ -452,7 +452,6 @@ class HubGui:
                     self._change_state("disarmed")
                     self._toggle_arm_button()
                 else:
-                    self._sound_alarm()
                     self._change_message("Armed")
                     self._change_state("armed")
                     self._toggle_arm_button()
