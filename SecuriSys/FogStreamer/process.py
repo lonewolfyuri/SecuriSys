@@ -75,9 +75,9 @@ class Fog:
         self.sound = payload[4] == '1'
         self.gas = payload[5] == '1'
         self.vibration = payload[6] == '1'
-        self.hub_string += "Minute: %r | Screen: %r | Motion: %r | Light: %r | Sound: %r | Gas: %r | Vibration: %r\n" % (self.minute, self.screenshot, self.motion, self.light, self.sound, self.gas, self.vibration)
 
-        print("Minute: %r | Screen: %r | Motion: %r | Light: %r | Sound: %r | Gas: %r | Vibration: %r\n" % (self.minute, self.screenshot, self.motion, self.light, self.sound, self.gas, self.vibration))
+        self.hub_string = "Minute: %r | Screen: %r | Motion: %r | Light: %r | Sound: %r | Gas: %r | Vibration: %r\n" % (self.minute, self.screenshot, self.motion, self.light, self.sound, self.gas, self.vibration)
+        print(self.hub_string)
 
     def _send_text(self, message="Emergency! There has been a break-in!"):
         # alert "authorities" of emergency
@@ -89,6 +89,10 @@ class Fog:
         with open('output/hub.txt') as f:
             f.write(self.hub_string)
 
+    def _append_file(self):
+        with open('output/hub.txt') as f:
+            f.write(self.hub_string)
+
     def _ship_hub(self):
         # figure out how to push latest reading to the cloud
         blob = self.image_bucket.blob(self.hub_dt.strftime('%m-%d-%Y_%H-%M-%S_%f.mp4'))
@@ -96,17 +100,21 @@ class Fog:
         return
 
     def _handle_hub(self, payload):
-        if self.first_read is None:
-            self.first_read = time.time()
         # process the hub reading
         self._process_hub(payload)
+        if self.first_read is None:
+            self._make_file()
+            self.first_read = time.time()
+        else:
+            self._append_file()
+
         if self.minute and not self.text_sent:
             self._send_text()
+
         if not self.minute:
             self.text_sent = False
+
         if time.time() - self.first_read >= HOUR:
-            # convert string to txt file
-            self._make_file()
             # push txt file to cloud
             self._ship_hub()
             # re-init hub for new hour
