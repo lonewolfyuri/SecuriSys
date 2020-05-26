@@ -157,9 +157,9 @@ class Fog:
             try:
                 result = self.sub_socket.recv()
                 if result:
-                    topic = result[0:5]
+                    topic = result[0:5].decode("utf-8")
                     if topic == HUB_TOPIC:
-                        self._handle_hub(result[5:])
+                        self._handle_hub(result[5:].decode("utf-8"))
                     elif topic == SCREENSHOT_TOPIC:
                         self._handle_screenshot(result[5:])
                     elif topic == FOOTAGE_TOPIC:
