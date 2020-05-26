@@ -30,6 +30,7 @@ import zmq
 import random
 import sys
 import time
+from SecuriSys.parameters import *
 
 import base64
 from os import path
@@ -44,11 +45,6 @@ frame_height = 720
 
 videoFramesStr = ""
 videoCounter = 0
-
-HUB_ADDR = "tcp://128.195.64.140"
-SENS_ADDR = "tcp://128.195.79.249"
-SURV_ADDR = "tcp://128.200.205.245"
-FOG_ADDR = "tcp://128.195.77.175"
 
 #**fog**
 currentDT = datetime.datetime.now()

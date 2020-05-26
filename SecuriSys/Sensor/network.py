@@ -2,12 +2,8 @@ import zmq
 import random
 import sys
 import time
-from sensor import Sensor
-
-HUB_ADDR = "tcp://128.195.64.140"
-SENS_ADDR = "tcp://128.195.79.249"
-SURV_ADDR = "tcp://128.200.205.245"
-FOG_ADDR = "tcp://128.195.77.175"
+from SecuriSys.Sensor.sensor import Sensor
+from SecuriSys.parameters import *
 
 port = "6000"
 if len(sys.argv) > 1:
@@ -31,4 +27,4 @@ while True:
     messagedata = binarySensor(senVals);
     print (topic+messagedata)
     socket.send_string((topic+messagedata))
-    time.sleep(0.5)
+    time.sleep(0.1)

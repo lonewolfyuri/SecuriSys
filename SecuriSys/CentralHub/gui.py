@@ -1,24 +1,15 @@
 import guizero as gz
 import tkinter as tk
+
+from SecuriSys.parameters import *
 from cryptography.fernet import Fernet
 import zmq, select, pygame, fcntl, os, socket
 
 # self.state values: "init" | "input" | "armed" | "disarmed"
 
-# Topic Filters: "10001" - Centeral Hub | "10002" - Sensors | "10003" - Screenshots | "10004" - Footage
-HUB_TOPIC = "10001"
-SENSOR_TOPIC = "10002"
-SCREENSHOT_TOPIC = "10003"
-FOOTAGE_TOPIC = "10004"
-
 w = 800
 h = 430
 s = 40
-
-HUB_ADDR = "tcp://128.195.64.140"
-SENS_ADDR = "tcp://128.195.79.249"
-SURV_ADDR = "tcp://128.200.205.245"
-FOG_ADDR = "tcp://128.195.77.175"
 
 class HubGui:
     def __init__(self, sens_port = "6000", surv_port = "5000", fog_port = "8000"):
@@ -63,10 +54,6 @@ class HubGui:
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.surv_topic)
 
         self.pub_socket.bind("tcp://*:%s" % self.fog_port)
-
-        self.read_list = [self.sub_socket]
-        self.write_list = [self.pub_socket]
-        self.err_list = [self.sub_socket, self.pub_socket]
 
     def _init_music(self):
         pygame.mixer.init()
@@ -184,40 +171,20 @@ class HubGui:
     def _handle_sockets(self):
         # print("Handle Sockets")
         self._reset_flags()
-        readable, writable, errored = select.select(self.read_list, self.write_list, self.err_list, 0.05)
-        print("Select Sockets: %d | %d | %d" % (len(readable), len(writable), len(errored)))
-        if len(errored) > 0:
-            for sock in errored:
-                print("Fixing a Connection")
-                if sock == self.pub_socket:
-                    self.pub_socket = self.context.socket(zmq.PUB)
-                    self.pub_socket.bind("tcp://*:%s" % self.fog_port)
-                elif sock == self.sub_socket:
-                    self.sub_socket = self.context.socket(zmq.SUB)
-                    self.sub_socket.connect("%s:%s" % (self.sens_addr, self.sens_port))
-                    self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
-                    self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.sens_topic)
-                    self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.surv_topic)
-            self.read_list = [self.sub_socket]
-            self.write_list = [self.pub_socket]
-            self.err_list = [self.sub_socket, self.pub_socket]
-            print("Connections Fixed")
 
-        for sock in readable:
-            try:
-                result = sock.recv(flags=zmq.NOBLOCK)
-                if result:
-                    topic = result[0:5]
-                    if topic == SENSOR_TOPIC:
-                        self._handle_sensor(result[5:]) # handle sensor data
-                    elif topic == SCREENSHOT_TOPIC:
-                        self.screenshot = True # handle screenshot
-                    # print("Read from a Socket")
-                    print("Result Input: %s" % result)
-            except zmq.Again as err:
-                print(err)
-                # print("Didn't read from a Socket")
-                continue
+        try:
+            result = self.sub_socket.recv(flags=zmq.NOBLOCK)
+            if result:
+                topic = result[0:5]
+                if topic == SENSOR_TOPIC:
+                    self._handle_sensor(result[5:])  # handle sensor data
+                elif topic == SCREENSHOT_TOPIC:
+                    self.screenshot = True  # handle screenshot
+                # print("Read from a Socket")
+                print("Result Input: %s" % result)
+        except zmq.Again as err:
+            print(err)
+            # print("Didn't read from a Socket")
 
         # print("Read Sockets")
         self._process_results()
@@ -228,8 +195,7 @@ class HubGui:
             else:
                 self.timer += 1
             message = self._get_message()
-            for sock in writable:
-                sock.send_string("%s%s" % (HUB_TOPIC, message))
+            self.pub_socket.send_string("%s%s" % (HUB_TOPIC, message))
             # print("Wrote to a Socket")
             # print("Message Output: %s" % message)
         # print("Write Sockets")

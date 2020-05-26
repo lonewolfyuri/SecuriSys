@@ -1,22 +1,12 @@
 import sys, zmq, select, time, socket
+from SecuriSys.parameters import *
 from datetime import datetime
 from twilio.rest import Client
 from gcloud import storage
 
 # Topic Filters: "10001" - Central Hub | "10002" - Sensors | "10003" - Screenshots | "10004" - Footage
-HUB_TOPIC = "10001"
-SENSOR_TOPIC = "10002"
-SCREENSHOT_TOPIC = "10003"
-FOOTAGE_TOPIC = "10004"
-
-DEVICE_ID = ""
 
 HOUR = 3600 # one hour = 60 minutes = 3600 seconds (time.time() is in seconds)
-
-HUB_ADDR = "tcp://128.195.64.140"
-SENS_ADDR = "tcp://128.195.79.249"
-SURV_ADDR = "tcp://128.200.205.245"
-FOG_ADDR = "tcp://128.195.77.175"
 
 class Fog:
     def __init__(self, emergency_contact = "+19495298086", hub_port = "8000", surv_port = "7000"):
@@ -164,8 +154,23 @@ class Fog:
 
     def run(self):
         while True:
-            readable, writable, errored = select.select(self.read_list, [], self.err_list)
-            if len(errored) > 0:
+            try:
+                result = self.sub_socket.recv()
+                if result:
+                    topic = result[0:5]
+                    if topic == HUB_TOPIC:
+                        self._handle_hub(result[5:])
+                    elif topic == SCREENSHOT_TOPIC:
+                        self._handle_screenshot(result[5:])
+                    elif topic == FOOTAGE_TOPIC:
+                        self._handle_footage(result[5:])
+                    print("Result: %s" % result)
+            except zmq.Again as err:
+                print(err)
+                continue
+
+            #readable, writable, errored = select.select(self.read_list, [], self.err_list)
+            '''if len(errored) > 0:
                 # handle connection error / re-establish connection
                 self.sub_socket = self.context.socket(zmq.SUB)
                 self.sub_socket.connect("%s:%s" % (self.hub_addr, self.hub_port))
@@ -190,6 +195,7 @@ class Fog:
                 except zmq.Again as err:
                     print(err)
                     continue
+            '''
 
 
 if __name__ == "__main__":
