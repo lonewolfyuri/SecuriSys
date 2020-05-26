@@ -6,8 +6,8 @@ from gcloud import storage
 
 # Topic Filters: "10001" - Central Hub | "10002" - Sensors | "10003" - Screenshots | "10004" - Footage
 
-HOUR = 3600 # one hour = 60 minutes = 3600 seconds (time.time() is in seconds)
-
+#HOUR = 3600 # one hour = 60 minutes = 3600 seconds (time.time() is in seconds)
+HOUR = 60
 class Fog:
     def __init__(self, emergency_contact = "+19495298086", hub_port = "8000", surv_port = "7000"):
         self.hub_port = hub_port
