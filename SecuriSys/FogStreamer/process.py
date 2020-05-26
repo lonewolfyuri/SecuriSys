@@ -98,7 +98,7 @@ class Fog:
 
     def _ship_hub(self):
         # figure out how to push latest reading to the cloud
-        blob = self.hub_bucket.blob(self.hub_dt.strftime('%m-%d-%Y_%H-%M-%S_%f.mp4'))
+        blob = self.hub_bucket.blob(self.hub_dt.strftime('%m-%d-%Y_%H-%M-%S_%f.txt'))
         blob.upload_from_filename(filename='output/hub.txt')
         return
 
@@ -137,7 +137,7 @@ class Fog:
     def _ship_screenshot(self):
         # figure out how to push screenshot to the cloud
         dtime = datetime.now()
-        blob = self.image_bucket.blob(dtime.strftime('%m-%d-%Y_%H-%M-%S_%f.mp4'))
+        blob = self.image_bucket.blob(dtime.strftime('%m-%d-%Y_%H-%M-%S_%f.jpeg'))
         blob.upload_from_filename(filename='output/image.jpeg')
 
     def _handle_screenshot(self, payload):
