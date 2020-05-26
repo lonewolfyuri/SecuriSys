@@ -12,7 +12,7 @@ h = 430
 s = 40
 
 class HubGui:
-    def __init__(self, sens_port = "6000", surv_port = "5000", fog_port = "8000"):
+    def __init__(self, sens_port = "6000", surv_port = "7000", fog_port = "8000"):
         self.sens_port = sens_port
         self.surv_port = surv_port
         self.fog_port = fog_port
