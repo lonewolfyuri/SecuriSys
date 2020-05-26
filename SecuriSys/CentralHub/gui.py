@@ -176,6 +176,7 @@ class HubGui:
             result = self.sub_socket.recv(flags=zmq.NOBLOCK)
             if result:
                 topic = result[0:5]
+                print("Topic: %s" % topic)
                 if topic == SENSOR_TOPIC:
                     self._handle_sensor(result[5:])  # handle sensor data
                 elif topic == SCREENSHOT_TOPIC:
