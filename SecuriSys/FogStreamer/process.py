@@ -160,6 +160,13 @@ class Fog:
             self.start = time.time()
         # split payload into frames
         #self._split_video(payload)
+        
+        nparr = np.fromstring(bytes(payload), np.uint8)
+        #reconstruct the image
+        remade_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        #add the image to our video frames
+        self.frames.append(remade_img)
+        
         # if it has been an hour: ship video to cloud and erase
         if time.time() - self.start >= HOUR:
             # figure out how to convert frames onto video
