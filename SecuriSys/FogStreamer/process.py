@@ -108,6 +108,13 @@ class Fog:
 
     def _make_image(self, payload):
         # converts image to jpeg as output/image.jpeg
+        
+        #get the image back into the normal numpy format
+        nparr = np.fromstring(bytes(payload), np.uint8)
+        #reconstruct the image
+        remade_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        #write image to output/image.jpeg
+        cv2.imwrite("output/image.jpeg", remade_img)
         return
 
     def _ship_screenshot(self):
@@ -131,6 +138,15 @@ class Fog:
 
     def _make_video(self):
         # convert self.frames into video at output/video.mp4
+        frame_width = 1280
+        frame_height = 720
+        outVideo = cv2.VideoWriter('output/video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
+        
+        for frame in frames:
+            
+            frame = cv2.resize(frame, (frame_width,frame_height))
+            outVideo.write(frame)
+        outVideo.release()
         return
 
     def _ship_video(self):
