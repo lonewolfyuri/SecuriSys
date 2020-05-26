@@ -175,10 +175,10 @@ class HubGui:
         try:
             result = self.sub_socket.recv(flags=zmq.NOBLOCK)
             if result:
-                topic = str(result[0:5])
+                topic = result[0:5].decode("utf-8")
                 print("Topic: %s" % topic)
                 if topic == SENSOR_TOPIC:
-                    self._handle_sensor(result[5:])  # handle sensor data
+                    self._handle_sensor(result[5:].decode("utf-8"))  # handle sensor data
                 elif topic == SCREENSHOT_TOPIC:
                     self.screenshot = True  # handle screenshot
                 # print("Read from a Socket")
