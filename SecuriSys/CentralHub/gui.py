@@ -192,6 +192,7 @@ class HubGui:
         if self.alarm:
             if self.timer >= 20:
                 self.timer = 0
+                print("Minute: %r" % self.minute)
                 self.minute = True
             else:
                 self.timer += 1
