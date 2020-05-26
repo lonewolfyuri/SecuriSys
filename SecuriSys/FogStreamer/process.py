@@ -67,7 +67,7 @@ class Fog:
         self.frames = []
         self.start = None
         self.footage_dt = datetime.now()
-        self._outVideo = cv2.VideoWriter('output/video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
+        self._outVideo = cv2.VideoWriter('output/video.avi', cv2.VideoWriter_fourcc(*'mjpg'), 10, (frame_width, frame_height))
 
     def _process_hub(self, payload):
         self.minute = payload[0] == '1'
@@ -153,7 +153,7 @@ class Fog:
         #self.frames.append(remade_img)
 
     def _make_video(self):
-        # convert self.frames into video at output/video.mp4
+        # convert self.frames into video at output/video.avi
         frame_width = 1280
         frame_height = 720
         
@@ -167,8 +167,8 @@ class Fog:
 
     def _ship_video(self):
         # figure out how to push video to the cloud
-        blob = self.footage_bucket.blob(self.footage_dt.strftime('%m-%d-%Y_%H-%M-%S_%f.mp4'))
-        blob.upload_from_filename(filename='output/video.mp4')
+        blob = self.footage_bucket.blob(self.footage_dt.strftime('%m-%d-%Y_%H-%M-%S_%f.avi'))
+        blob.upload_from_filename(filename='output/video.avi')
 
     def _handle_footage(self, payload):
         if self.start is None:
