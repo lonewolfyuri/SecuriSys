@@ -1,3 +1,4 @@
+
 import sys, zmq, select, time, socket
 from parameters import *
 from datetime import datetime
@@ -9,7 +10,7 @@ import cv2
 # Topic Filters: "10001" - Central Hub | "10002" - Sensors | "10003" - Screenshots | "10004" - Footage
 
 #HOUR = 3600 # one hour = 60 minutes = 3600 seconds (time.time() is in seconds)
-HOUR = 60
+HOUR = 15
 class Fog:
     def __init__(self, emergency_contact = "+19495298086", hub_port = "8000", surv_port = "7000"):
         self.hub_port = hub_port
@@ -26,6 +27,8 @@ class Fog:
         self._init_cloud()
         self._init_hub()
         self._init_footage()
+        
+        self._outVideo = None
 
     def _init_net(self):
         self.hub_topic = HUB_TOPIC
@@ -136,18 +139,19 @@ class Fog:
         # reconstruct the image
         remade_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         # add the image to our video frames
-        self.frames.append(remade_img)
+        _outVideo.write(remade_img)
+        #self.frames.append(remade_img)
 
     def _make_video(self):
         # convert self.frames into video at output/video.mp4
         frame_width = 1280
         frame_height = 720
-        outVideo = cv2.VideoWriter('output/video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
         
-        for frame in self.frames:
-            
-            frame = cv2.resize(frame, (frame_width,frame_height))
-            outVideo.write(frame)
+        
+        #for frame in self.frames:
+        #    
+        #    frame = cv2.resize(frame, (frame_width,frame_height))
+        #    outVideo.write(frame)
         outVideo.release()
         return
 
@@ -159,6 +163,7 @@ class Fog:
     def _handle_footage(self, payload):
         if self.start is None:
             self.start = time.time()
+            self._outVideo = cv2.VideoWriter('output/video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
         # split payload into frames
         self._add_video(payload)
         # if it has been an hour: ship video to cloud and erase
