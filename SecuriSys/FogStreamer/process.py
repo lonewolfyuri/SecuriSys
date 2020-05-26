@@ -159,7 +159,7 @@ class Fog:
         if self.start is None:
             self.start = time.time()
         # split payload into frames
-        self._split_video(payload)
+        #self._split_video(payload)
         # if it has been an hour: ship video to cloud and erase
         if time.time() - self.start >= HOUR:
             # figure out how to convert frames onto video
