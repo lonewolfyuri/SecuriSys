@@ -76,6 +76,7 @@ class Fog:
 
     def _send_text(self, message="Emergency! There has been a break-in!"):
         # alert "authorities" of emergency
+        self.text_sent = True
         self.text_client.messages.create(to=self.emergency_contact, from_="+19496494383", body=message)
 
     def _make_file(self):
