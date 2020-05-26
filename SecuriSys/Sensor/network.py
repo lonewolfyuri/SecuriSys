@@ -2,8 +2,8 @@ import zmq
 import random
 import sys
 import time
-from SecuriSys.Sensor.sensor import Sensor
-from SecuriSys.parameters import *
+from sensor import Sensor
+from parameters import *
 
 port = "6000"
 if len(sys.argv) > 1:
