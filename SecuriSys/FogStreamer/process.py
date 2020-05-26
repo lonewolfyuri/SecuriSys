@@ -6,6 +6,7 @@ from twilio.rest import Client
 from gcloud import storage
 import numpy as np
 import cv2
+import os
 
 # Topic Filters: "10001" - Central Hub | "10002" - Sensors | "10003" - Screenshots | "10004" - Footage
 
@@ -13,7 +14,7 @@ frame_width = 1280
 frame_height = 720
 
 #HOUR = 3600 # one hour = 60 minutes = 3600 seconds (time.time() is in seconds)
-HOUR = 60
+HOUR = 20
 class Fog:
     def __init__(self, emergency_contact = "+19495298086", hub_port = "8000", surv_port = "7000"):
         self.hub_port = hub_port
@@ -67,6 +68,11 @@ class Fog:
         self.frames = []
         self.start = None
         self.footage_dt = datetime.now()
+        
+        try:
+            os.remove("output/video.avi")
+        except:
+            pass
         self._outVideo = cv2.VideoWriter('output/video.avi', cv2.VideoWriter_fourcc(*'mjpg'), 10, (frame_width, frame_height))
 
     def _process_hub(self, payload):
