@@ -88,7 +88,7 @@ class Fog:
 
     def _ship_hub(self):
         # figure out how to push latest reading to the cloud
-        blob = self.image_bucket.get_blob('%d-%d-%d/%d_%d_%d.txt' % (self.hub_dt.month, self.hub_dt.day, self.hub_dt.year, self.hub_dt.hour, self.hub_dt.minute,self.hub_dt.second))
+        blob = self.image_bucket.get_blob('%d-%d-%d_%d-%d-%d.txt' % (self.hub_dt.month, self.hub_dt.day, self.hub_dt.year, self.hub_dt.hour, self.hub_dt.minute,self.hub_dt.second))
         blob.upload_from_filename(filename='output/hub.txt')
         return
 
@@ -123,7 +123,7 @@ class Fog:
     def _ship_screenshot(self):
         # figure out how to push screenshot to the cloud
         dtime = datetime.now()
-        blob = self.image_bucket.get_blob('%d-%d-%d/%d_%d_%d.jpeg' % (dtime.month, dtime.day, dtime.year, dtime.hour, dtime.minute, dtime.second))
+        blob = self.image_bucket.get_blob('%d-%d-%d_%d-%d-%d.jpeg' % (dtime.month, dtime.day, dtime.year, dtime.hour, dtime.minute, dtime.second))
         blob.upload_from_filename(filename='output/image.jpeg')
 
     def _handle_screenshot(self, payload):
@@ -153,7 +153,7 @@ class Fog:
 
     def _ship_video(self):
         # figure out how to push video to the cloud
-        blob = self.image_bucket.get_blob('%d-%d-%d/%d_%d_%d.mp4' % (self.footage_dt.month, self.footage_dt.day, self.footage_dt.year, self.footage_dt.hour, self.footage_dt.minute, self.footage_dt.second))
+        blob = self.image_bucket.get_blob('%d-%d-%d_%d-%d-%d.mp4' % (self.footage_dt.month, self.footage_dt.day, self.footage_dt.year, self.footage_dt.hour, self.footage_dt.minute, self.footage_dt.second))
         blob.upload_from_filename(filename='output/video.mp4')
 
     def _handle_footage(self, payload):
