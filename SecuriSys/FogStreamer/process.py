@@ -13,7 +13,7 @@ frame_width = 1280
 frame_height = 720
 
 #HOUR = 3600 # one hour = 60 minutes = 3600 seconds (time.time() is in seconds)
-HOUR = 15
+HOUR = 60
 class Fog:
     def __init__(self, emergency_contact = "+19495298086", hub_port = "8000", surv_port = "7000"):
         self.hub_port = hub_port
