@@ -69,6 +69,7 @@ class Fog:
         self.frames = []
         self.start = None
         self.footage_dt = datetime.now()
+        self._outVideo = cv2.VideoWriter('output/video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
 
     def _process_hub(self, payload):
         self.minute = payload[0] == '1'
@@ -174,7 +175,6 @@ class Fog:
     def _handle_footage(self, payload):
         if self.start is None:
             self.start = time.time()
-            self._outVideo = cv2.VideoWriter('output/video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
         # split payload into frames
         self._add_video(payload)
         # if it has been an hour: ship video to cloud and erase
