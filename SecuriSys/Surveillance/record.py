@@ -30,7 +30,7 @@ import zmq
 import random
 import sys
 import time
-from parameters import *
+from ..parameters import *
 
 import base64
 from os import path

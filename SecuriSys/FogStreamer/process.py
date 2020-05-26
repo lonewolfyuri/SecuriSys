@@ -1,5 +1,5 @@
 import sys, zmq, select, time, socket
-from parameters import *
+from ..parameters import *
 from datetime import datetime
 from twilio.rest import Client
 from gcloud import storage
