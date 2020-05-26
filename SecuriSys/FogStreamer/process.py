@@ -3,6 +3,7 @@ from parameters import *
 from datetime import datetime
 from twilio.rest import Client
 from gcloud import storage
+import numpy as np
 
 # Topic Filters: "10001" - Central Hub | "10002" - Sensors | "10003" - Screenshots | "10004" - Footage
 
