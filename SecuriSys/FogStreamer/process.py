@@ -89,11 +89,11 @@ class Fog:
 
     def _make_file(self):
         # converts string to txt as output/hub.txt
-        with open('output/hub.txt') as f:
+        with open('output/hub.txt', 'w') as f:
             f.write(self.hub_string)
 
     def _append_file(self):
-        with open('output/hub.txt') as f:
+        with open('output/hub.txt', 'a') as f:
             f.write(self.hub_string)
 
     def _ship_hub(self):
