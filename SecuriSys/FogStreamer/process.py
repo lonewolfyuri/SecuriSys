@@ -147,7 +147,7 @@ class Fog:
         # reconstruct the image
         remade_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         # add the image to our video frames
-        _outVideo.write(remade_img)
+        self._outVideo.write(remade_img)
         #self.frames.append(remade_img)
 
     def _make_video(self):
@@ -160,7 +160,7 @@ class Fog:
         #    
         #    frame = cv2.resize(frame, (frame_width,frame_height))
         #    outVideo.write(frame)
-        outVideo.release()
+        self._outVideo.release()
         return
 
     def _ship_video(self):
