@@ -30,8 +30,6 @@ class Fog:
         self._init_cloud()
         self._init_hub()
         self._init_footage()
-        
-        self._outVideo = None
 
     def _init_net(self):
         self.hub_topic = HUB_TOPIC
