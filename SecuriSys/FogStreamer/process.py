@@ -1,7 +1,8 @@
-import sys, zmq, select, time, socket
+import sys, zmq, select, time, socket, cv2
 from datetime import datetime
 from twilio.rest import Client
 from gcloud import storage
+import numpy as np
 
 # Topic Filters: "10001" - Central Hub | "10002" - Sensors | "10003" - Screenshots | "10004" - Footage
 HUB_TOPIC = "10001"
@@ -13,10 +14,10 @@ DEVICE_ID = ""
 
 HOUR = 3600 # one hour = 60 minutes = 3600 seconds (time.time() is in seconds)
 
-HUB_ADDR = "tcp://128.195.64.140"
-SENS_ADDR = "tcp://128.195.79.249"
-SURV_ADDR = "tcp://128.200.205.245"
-FOG_ADDR = "tcp://128.195.77.175"
+HUB_ADDR = "tcp://localhost"
+SENS_ADDR = "tcp://localhost"
+SURV_ADDR = "tcp://localhost"
+FOG_ADDR = "tcp://localhost"
 
 class Fog:
     def __init__(self, emergency_contact = "+19495298086", hub_port = "8000", surv_port = "7000"):
@@ -31,7 +32,7 @@ class Fog:
         self.text_client = Client("ACfb45069384449efc0a19acb6ea88d359", "0046fd99e4b7e2c5291a48faf8bce35d")
 
         self._init_net()
-        self._init_cloud()
+        #self._init_cloud()
         self._init_hub()
         self._init_footage()
 
@@ -118,6 +119,13 @@ class Fog:
 
     def _make_image(self, payload):
         # converts image to jpeg as output/image.jpeg
+        
+        #get the image back into the normal numpy format
+        nparr = np.fromstring(bytes(payload), np.uint8)
+        #reconstruct the image
+        remade_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        #write image to output/image.jpeg
+        cv2.imwrite("output/image.jpeg", remade_img)
         return
 
     def _ship_screenshot(self):
@@ -141,6 +149,15 @@ class Fog:
 
     def _make_video(self):
         # convert self.frames into video at output/video.mp4
+        frame_width = 1280
+        frame_height = 720
+        outVideo = cv2.VideoWriter('output/video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
+        
+        for frame in frames:
+            
+            frame = cv2.resize(frame, (frame_width,frame_height))
+            outVideo.write(frame)
+        outVideo.release()
         return
 
     def _ship_video(self):
@@ -152,7 +169,14 @@ class Fog:
         if self.start is None:
             self.start = time.time()
         # split payload into frames
-        self._split_video(payload)
+        ####self._split_video(payload)
+        
+        nparr = np.fromstring(bytes(payload), np.uint8)
+        #reconstruct the image
+        remade_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        #add the image to our video frames
+        self.frames.append(remade_img)
+        
         # if it has been an hour: ship video to cloud and erase
         if time.time() - self.start >= HOUR:
             # figure out how to convert frames onto video
@@ -164,32 +188,41 @@ class Fog:
 
     def run(self):
         while True:
-            readable, writable, errored = select.select(self.read_list, [], self.err_list)
-            if len(errored) > 0:
-                # handle connection error / re-establish connection
-                self.sub_socket = self.context.socket(zmq.SUB)
-                self.sub_socket.connect("%s:%s" % (self.hub_addr, self.hub_port))
-                self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
-                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.hub_topic)
-                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.screenshot_topic)
-                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.footage_topic)
-                self.read_list = [self.sub_socket]
-                self.err_list = [self.sub_socket]
+            #readable, writable, errored = select.select(self.read_list, [], self.err_list)
+            readable,writable,errored = self.read_list,[],self.err_list
+#             if len(errored) > 0:
+#                 # handle connection error / re-establish connection
+#                 self.sub_socket = self.context.socket(zmq.SUB)
+#                 self.sub_socket.connect("%s:%s" % (self.hub_addr, self.hub_port))
+#                 self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
+#                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.hub_topic)
+#                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.screenshot_topic)
+#                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.footage_topic)
+#                 self.read_list = [self.sub_socket]
+#                 self.err_list = [self.sub_socket]
 
             for sock in readable:
+                print("sock:", sock, len(readable))
+                result = None
                 try:
                     result = sock.recv(flags=zmq.NOBLOCK)
-                    if result:
-                        topic = result[0:5]
-                        if topic == HUB_TOPIC:
-                            self._handle_hub(result[5:])
-                        elif topic == SCREENSHOT_TOPIC:
-                            self._handle_screenshot(result[5:])
-                        elif topic == FOOTAGE_TOPIC:
-                            self._handle_footage(result[5:])
                 except zmq.Again as err:
                     print(err)
                     continue
+                
+                #print("result:", result)
+                if result:
+                    if (type(result) == str):
+                        topic = result[0:5]
+                        if topic == HUB_TOPIC:
+                            self._handle_hub(result[5:])
+                    if (type(result) == bytes):
+                        topic = result[0:5].decode("utf-8")
+                        if topic == SCREENSHOT_TOPIC:
+                            self._handle_screenshot(bytearray(result)[5:])
+                        if topic == FOOTAGE_TOPIC:
+                            self._handle_footage(bytearray(result)[5:])
+
 
 
 if __name__ == "__main__":
