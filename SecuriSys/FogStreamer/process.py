@@ -144,7 +144,7 @@ class Fog:
         frame_height = 720
         outVideo = cv2.VideoWriter('output/video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
         
-        for frame in frames:
+        for frame in self.frames:
             
             frame = cv2.resize(frame, (frame_width,frame_height))
             outVideo.write(frame)
