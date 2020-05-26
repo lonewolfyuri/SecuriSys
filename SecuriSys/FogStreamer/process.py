@@ -98,7 +98,7 @@ class Fog:
 
     def _ship_hub(self):
         # figure out how to push latest reading to the cloud
-        blob = self.image_bucket.blob(self.hub_dt.strftime('%m-%d-%Y_%H-%M-%S_%f.mp4'))
+        blob = self.hub_bucket.blob(self.hub_dt.strftime('%m-%d-%Y_%H-%M-%S_%f.mp4'))
         blob.upload_from_filename(filename='output/hub.txt')
         return
 
@@ -168,7 +168,7 @@ class Fog:
 
     def _ship_video(self):
         # figure out how to push video to the cloud
-        blob = self.image_bucket.blob(self.footage_dt.strftime('%m-%d-%Y_%H-%M-%S_%f.mp4'))
+        blob = self.footage_bucket.blob(self.footage_dt.strftime('%m-%d-%Y_%H-%M-%S_%f.mp4'))
         blob.upload_from_filename(filename='output/video.mp4')
 
     def _handle_footage(self, payload):
