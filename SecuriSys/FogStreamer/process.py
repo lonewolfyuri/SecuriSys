@@ -47,11 +47,6 @@ class Fog:
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.screenshot_topic)
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.footage_topic)
 
-        #self.pub_socket.bind("tcp://*:%s" % self.cloud_port)
-
-        self.read_list = [self.sub_socket]
-        self.err_list = [self.sub_socket]
-
     def _init_cloud(self):
         # figure out credentials/auth for client
         self.cloud_client = storage.Client() # options: project, credentials, http
@@ -130,7 +125,6 @@ class Fog:
 
     def _make_image(self, payload):
         # converts image to jpeg as output/image.jpeg
-        
         #get the image back into the normal numpy format
         nparr = np.fromstring(bytes(payload), np.uint8)
         #reconstruct the image
@@ -160,14 +154,6 @@ class Fog:
 
     def _make_video(self):
         # convert self.frames into video at output/video.avi
-        frame_width = 1280
-        frame_height = 720
-        
-        
-        #for frame in self.frames:
-        #    
-        #    frame = cv2.resize(frame, (frame_width,frame_height))
-        #    outVideo.write(frame)
         self._outVideo.release()
         return
 
@@ -207,96 +193,7 @@ class Fog:
                 print(err)
                 continue
 
-            #readable, writable, errored = select.select(self.read_list, [], self.err_list)
-            '''if len(errored) > 0:
-                # handle connection error / re-establish connection
-                self.sub_socket = self.context.socket(zmq.SUB)
-                self.sub_socket.connect("%s:%s" % (self.hub_addr, self.hub_port))
-                self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
-                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.hub_topic)
-                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.screenshot_topic)
-                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.footage_topic)
-                self.read_list = [self.sub_socket]
-                self.err_list = [self.sub_socket]
-
-            for sock in readable:
-                try:
-                    result = sock.recv(flags=zmq.NOBLOCK)
-                    if result:
-                        topic = result[0:5]
-                        if topic == HUB_TOPIC:
-                            self._handle_hub(result[5:])
-                        elif topic == SCREENSHOT_TOPIC:
-                            self._handle_screenshot(result[5:])
-                        elif topic == FOOTAGE_TOPIC:
-                            self._handle_footage(result[5:])
-                except zmq.Again as err:
-                    print(err)
-                    continue
-            '''
-
 
 if __name__ == "__main__":
     fog = Fog()
     fog.run()
-
-
-'''
-def send_hub_topic_command(sock, message, log=True):
-    """ returns message received """
-    response = "I am response"
-
-    if log:
-        print('sending: "{}"'.format(message), file=sys.stderr)
-
-    sock.sendto(message.encode('utf8'), 'localhost') # server is gateway device
-
-    # Receive response
-    if log:
-        print('waiting for response', file=sys.stderr)
-        response, _ = sock.recvfrom(4096)
-    if log:
-        print('received: "{}"'.format(response), file=sys.stderr)
-
-    return response
-
-
-def send_sensor_topic_command(sock, message, log=True):
-    pass
-
-
-def send_screenshot_topic_command(sock, message, log=True):
-    pass
-
-
-def send_footage_topic_command(sock, message, log=True):
-    pass
-
-
-if __name__ == "__main__":
-    # Socket to talk to server
-    context = zmq.Context()
-    socket = context.socket(zmq.SUB)
-
-    print("Collecting updates from raspberry pis...")
-    PORT = 5556
-    socket.connect("tcp://localhost:%s" % PORT)
-
-    # Subscribe to zipcode, default is NYC, 10001
-    # topicfilter = "10001"
-    # socket.setsockopt_string(zmq.SUBSCRIBE, topicfilter)
-
-    while True:
-        string = socket.recv()
-        topic, messagedata = string.split()
-        print(topic)
-        print(messagedata)
-        if topic == HUB_TOPIC:
-            send_hub_topic_command(messagedata)
-        elif topic == SENSOR_TOPIC:
-            send_sensor_topic_command()
-        elif topic == SCREENSHOT_TOPIC:
-            pass
-        elif topic == FOOTAGE_TOPIC:
-            pass
-'''
