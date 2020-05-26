@@ -9,6 +9,9 @@ import cv2
 
 # Topic Filters: "10001" - Central Hub | "10002" - Sensors | "10003" - Screenshots | "10004" - Footage
 
+frame_width = 1280
+frame_height = 720
+
 #HOUR = 3600 # one hour = 60 minutes = 3600 seconds (time.time() is in seconds)
 HOUR = 15
 class Fog:
