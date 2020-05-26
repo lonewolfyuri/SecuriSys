@@ -178,11 +178,11 @@ class Fog:
                     topic = result[0:5].decode("utf-8")
                     if topic == HUB_TOPIC:
                         self._handle_hub(result[5:].decode("utf-8"))
+                        print("Result: %s" % result)
                     elif topic == SCREENSHOT_TOPIC:
                         self._handle_screenshot(result[5:])
                     elif topic == FOOTAGE_TOPIC:
                         self._handle_footage(result[5:])
-                    print("Result: %s" % result)
             except zmq.Again as err:
                 print(err)
                 continue
