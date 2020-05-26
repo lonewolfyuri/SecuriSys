@@ -1,7 +1,7 @@
 import guizero as gz
 import tkinter as tk
 
-from ..parameters import *
+from parameters import *
 from cryptography.fernet import Fernet
 import zmq, select, pygame, fcntl, os, socket
 

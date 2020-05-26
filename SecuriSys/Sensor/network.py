@@ -3,7 +3,7 @@ import random
 import sys
 import time
 from sensor import Sensor
-from ..parameters import *
+from parameters import *
 
 port = "6000"
 if len(sys.argv) > 1:
