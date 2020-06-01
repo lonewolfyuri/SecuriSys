@@ -72,7 +72,17 @@ class HubGui:
         self._init_loading()
 
     def _init_loading(self):
-        self.progress = ttk.Progressbar(self.intro.tk, orient=tk.HORIZONTAL, length=120, mode='determinate')
+        self.loading_box = gz.Box(self.intro, width=w, height=int(h / 4), layout="fill", align="bottom", border=False)
+        self.loading_box.text_color = "#171717"
+        self.loading_box.tk.configure(background="#171717")
+        self.loading_box.tk.configure(bg="#171717")
+        self.loading_box.tk.configure(borderwidth=0)
+        self.loading_box.tk.configure(bd=0)
+        self.loading_box.tk.configure(highlightthickness=0)
+        self.loading_box.tk.configure(highlightcolor="#171717")
+        self.loading_box.tk.configure(highlightbackground="#171717")
+
+        self.progress = ttk.Progressbar(self.loading_box.tk, orient=tk.HORIZONTAL, length=int(w * 0.8), mode='determinate', maximum=120)
         self.progress.pack()
 
     def _show_loading(self):
