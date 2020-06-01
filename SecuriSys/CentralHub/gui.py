@@ -2,6 +2,7 @@ import guizero as gz
 import tkinter as tk
 import tkinter.ttk as ttk
 
+from PIL import Image
 from guizero import Window, Picture
 from parameters import *
 from cryptography.fernet import Fernet
@@ -73,7 +74,7 @@ class HubGui:
         #self.intro_box.tk.configure()
         #self.intro_bg = tk.Label(self.intro.tk, image=tk.PhotoImage("resources/loading.png"))
         #self.intro_bg.place(x=0, y=0, relwidth=1, relheight=1)
-        self.intro_bg = Picture(self.intro_box, image="resources/loading.png", align="left")
+        self.intro_bg = Picture(self.intro_box, image="resources/loading.png", align="left", width=450)
 
         s = ttk.Style()
         s.theme_use('clam')
