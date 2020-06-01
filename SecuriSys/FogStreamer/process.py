@@ -23,6 +23,8 @@ class Fog:
         self.hub_addr = HUB_ADDR
         self.surv_addr = SURV_ADDR
 
+        self.hub_timer = time.time()
+
         self.text_sent = False
         self.emergency_contact = emergency_contact
         self.text_client = Client("ACfb45069384449efc0a19acb6ea88d359", "0046fd99e4b7e2c5291a48faf8bce35d")
@@ -110,13 +112,10 @@ class Fog:
             self.first_read = time.time()
         else:
             self._append_file()
-
         if self.minute and not self.text_sent:
             self._send_text()
-
         if not self.minute:
             self.text_sent = False
-
         if time.time() - self.first_read >= HOUR:
             # push txt file to cloud
             self._ship_hub()
@@ -178,6 +177,9 @@ class Fog:
 
     def run(self):
         while True:
+            if time.time() - self.hub_timer > 60:
+                self._send_text("Emergency! Lost Communication with Central Hub!")
+                self.hub_timer = time.time()
             try:
                 result = self.sub_socket.recv()
                 if result:
@@ -189,9 +191,19 @@ class Fog:
                         self._handle_screenshot(result[5:])
                     elif topic == FOOTAGE_TOPIC:
                         self._handle_footage(result[5:])
+                    elif topic == CONNECT_TOPIC:
+                        self.hub_timer = time.time()
             except zmq.Again as err:
                 print(err)
-                continue
+            except:
+                self.sub_socket = self.context.socket(zmq.SUB)
+
+                self.sub_socket.connect("%s:%s" % (self.hub_addr, self.hub_port))
+                self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
+
+                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.hub_topic)
+                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.screenshot_topic)
+                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.footage_topic)
 
 
 if __name__ == "__main__":

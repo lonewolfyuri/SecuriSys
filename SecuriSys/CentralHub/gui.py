@@ -26,6 +26,7 @@ class HubGui:
         self.failed = 0
         self.alarm = False
         self.timer = 0
+        self.sensor_timer = 0
 
         self.encrypt = "" # encrypted code to verify against input code
         self.code = "" # input code to verify aginst encrypted code
@@ -45,7 +46,6 @@ class HubGui:
 
         self.context = zmq.Context()
         self.sub_socket = self.context.socket(zmq.SUB)
-        self.pub_socket = self.context.socket(zmq.PUB)
 
         self.sub_socket.connect("%s:%s" % (self.sens_addr, self.sens_port))
         self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
@@ -53,6 +53,7 @@ class HubGui:
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.sens_topic)
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.surv_topic)
 
+        self.pub_socket = self.context.socket(zmq.PUB)
         self.pub_socket.bind("tcp://*:%s" % self.fog_port)
 
     def _init_music(self):
@@ -168,16 +169,31 @@ class HubGui:
         self.sampling_widget = gz.Box(self.app, visible=False)
         self.sampling_widget.repeat(50, self._handle_sockets)
 
+    def _sensor_timer(self):
+        if self.sensor_timer >= 300:
+            self.sensor_timer = 0
+            self._sound_alarm()
+        else:
+            self.sensor_timer += 1
+
+    def _minute_timer(self):
+        if self.timer >= 300:
+            self.timer = 0
+            print("Minute: %r" % self.minute)
+            self.minute = True
+        else:
+            self.timer += 1
+
     def _handle_sockets(self):
         # print("Handle Sockets")
         self._reset_flags()
-
         try:
             result = self.sub_socket.recv(flags=zmq.NOBLOCK)
             if result:
                 topic = result[0:5].decode("utf-8")
                 print("Topic: %s" % topic)
                 if topic == SENSOR_TOPIC:
+                    self.sensor_timer = 0
                     self._handle_sensor(result[5:].decode("utf-8"))  # handle sensor data
                 elif topic == SCREENSHOT_TOPIC:
                     self.screenshot = True  # handle screenshot
@@ -186,21 +202,21 @@ class HubGui:
         except zmq.Again as err:
             print(err)
             # print("Didn't read from a Socket")
+        except:
+            self.sub_socket = self.context.socket(zmq.SUB)
+            self.sub_socket.connect("%s:%s" % (self.sens_addr, self.sens_port))
+            self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
+            self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.sens_topic)
+            self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.surv_topic)
 
         # print("Read Sockets")
         self._process_results()
+        self._sensor_timer();
         if self.alarm:
-            if self.timer >= 20:
-                self.timer = 0
-                print("Minute: %r" % self.minute)
-                self.minute = True
-            else:
-                self.timer += 1
+            self._minute_timer();
             message = self._get_message()
             self.pub_socket.send_string("%s%s" % (HUB_TOPIC, message))
-            # print("Wrote to a Socket")
-            # print("Message Output: %s" % message)
-        # print("Write Sockets")
+            self.pub_socket.send_string("%s" % HUB_TOPIC)
 
     def _reset_flags(self):
         self.screenshot = False
@@ -465,6 +481,7 @@ class HubGui:
     def _sound_alarm(self):
         self.alarm = True
         self.timer = 0
+        self.sensor_timer = 0
         self.minute = False
         pygame.mixer.music.play(9999999, 0.0)
         print("Alarm is on!")
@@ -472,6 +489,7 @@ class HubGui:
     def _stop_alarm(self):
         self.alarm = False
         self.timer = 0
+        self.sensor_timer = 0
         self.minute = False
         pygame.mixer.music.stop()
         print("Alarm is off!")
