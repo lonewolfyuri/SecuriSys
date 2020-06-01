@@ -522,11 +522,15 @@ class HubGui:
             self.progress['value'] += self._get_increment()
             self.app.after(100, self._progress_bar)
         else:
+            self.done = True
             self.intro.hide()
 
     def display(self):
+        self.done = False
         self.intro.show()
         self._progress_bar()
+        while not self.done:
+            continue
         self.app.display()
 
 
