@@ -68,6 +68,7 @@ class HubGui:
 
     def _init_intro(self):
         self.intro = Window(self.app, bg="#171717", title="SecuriSys Central Hub", width=w, height=h)
+        self.intro.set_full_screen()
         self._init_loading()
 
     def _init_loading(self):
@@ -76,7 +77,6 @@ class HubGui:
 
     def _show_loading(self):
         self.intro.show()
-        self.intro.set_full_screen()
 
     def _init_app(self):
         self.app.set_full_screen()
