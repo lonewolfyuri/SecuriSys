@@ -205,7 +205,7 @@ class HubGui:
             self.first = False
             self._show_loading()
 
-        while not self.done:
+        if not self.done:
             self._progress_bar()
 
         # print("Handle Sockets")
