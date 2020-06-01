@@ -69,7 +69,7 @@ class HubGui:
     def _init_intro(self):
         self.intro = Window(self.app, bg="#171717", title="SecuriSys Central Hub", width=w, height=h)
         self.intro.set_full_screen()
-        self.intro_bg = Picture(self.intro, image="resources/loading.png", width=w, height=h)
+        self.intro_bg = Picture(self.intro, image="resources/loading.png", width=450, height=300)
         s = ttk.Style()
         s.theme_use('clam')
         s.configure("silver.Horizontal.TProgressbar", foreground='#C0C0C0', background='#171717')
