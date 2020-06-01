@@ -29,6 +29,8 @@ class HubGui:
         self.alarm = False
         self.timer = 0
         self.sensor_timer = 0
+        self.done = False
+        self.first = True
 
         self.encrypt = "" # encrypted code to verify against input code
         self.code = "" # input code to verify aginst encrypted code
@@ -521,6 +523,10 @@ class HubGui:
             return 2
 
     def _progress_bar(self):
+        if self.first:
+            self.first = False
+            self.intro.show()
+
         if self.progress['value'] < 100:
             self.progress['value'] += self._get_increment()
             self.app.after(100, self._progress_bar)
@@ -529,8 +535,6 @@ class HubGui:
             self.intro.hide()
 
     def display(self):
-        self.done = False
-        self.intro.show()
         self.app.display()
 
 
