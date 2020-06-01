@@ -69,6 +69,9 @@ class HubGui:
     def _init_intro(self):
         self.intro = Window(self.app, bg="#171717", title="SecuriSys Central Hub", width=w, height=h)
         self.intro.set_full_screen()
+        s = ttk.Style()
+        s.theme_use('clam')
+        s.configure("silver.Horizontal.TProgressbar", foreground='#C0C0C0', background='#171717')
         self._init_loading()
 
     def _init_loading(self):
@@ -82,7 +85,7 @@ class HubGui:
         self.loading_box.tk.configure(highlightcolor="#171717")
         self.loading_box.tk.configure(highlightbackground="#171717")
 
-        self.progress = ttk.Progressbar(self.loading_box.tk, orient=tk.HORIZONTAL, length=int(w * 0.8), mode='determinate', maximum=120)
+        self.progress = ttk.Progressbar(self.loading_box.tk, style="silver.Horizontal.TProgressbar", orient=tk.HORIZONTAL, length=int(w * 0.8), mode='determinate', maximum=120)
         self.progress.pack()
 
     def _show_loading(self):
