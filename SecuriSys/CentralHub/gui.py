@@ -69,24 +69,16 @@ class HubGui:
     def _init_intro(self):
         self.intro = Window(self.app, bg="#171717", title="SecuriSys Central Hub", width=w, height=h)
         self.intro.set_full_screen()
-        self.intro_bg = Picture(self.intro, image="resources/loading.png", width=450, height=300)
+        self.intro_box = gz.Box(self.intro, width=w, height=h, layout="fill", align="left", border=False)
+        self.intro_bg = Picture(self.intro_box, image="resources/loading.png", width=self.intro_box.width, height=self.intro_box.height, align="top")
         s = ttk.Style()
         s.theme_use('clam')
         s.configure("silver.Horizontal.TProgressbar", foreground='#C0C0C0', background='#171717')
         self._init_loading()
 
     def _init_loading(self):
-        self.loading_box = gz.Box(self.intro, width=w, height=int(h / 4), layout="fill", align="bottom", border=False)
-        self.loading_box.text_color = "#171717"
-        self.loading_box.tk.configure(background="#171717")
-        self.loading_box.tk.configure(bg="#171717")
-        self.loading_box.tk.configure(borderwidth=0)
-        self.loading_box.tk.configure(bd=0)
-        self.loading_box.tk.configure(highlightthickness=0)
-        self.loading_box.tk.configure(highlightcolor="#171717")
-        self.loading_box.tk.configure(highlightbackground="#171717")
-
-        self.progress = ttk.Progressbar(self.loading_box.tk, style="silver.Horizontal.TProgressbar", orient=tk.HORIZONTAL, length=int(w * 0.8), mode='determinate', maximum=120)
+        self.loading_box = gz.Box(self.intro_bg, width=self.intro_bg.width, height=int(self.intro_bg.height / 4), layout="fill", align="bottom", border=False)
+        self.progress = ttk.Progressbar(self.loading_box.tk, style="silver.Horizontal.TProgressbar", orient=tk.HORIZONTAL, length=int(self.loading_box.width * 0.8), mode='determinate', maximum=120)
         self.progress.pack()
 
     def _show_loading(self):
