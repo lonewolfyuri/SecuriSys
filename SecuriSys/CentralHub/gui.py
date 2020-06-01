@@ -42,8 +42,8 @@ class HubGui:
 
         self._init_net()
         self._init_music()
-        self._init_intro()
         self._init_app()
+        self._init_intro()
 
     def _init_net(self):
         self.sens_topic = SENSOR_TOPIC
