@@ -197,6 +197,9 @@ class HubGui:
             self.timer += 1
 
     def _handle_sockets(self):
+        if not self.done:
+            self._progress_bar()
+
         # print("Handle Sockets")
         self._reset_flags()
         try:
@@ -520,7 +523,7 @@ class HubGui:
     def _progress_bar(self):
         if self.progress['value'] < 100:
             self.progress['value'] += self._get_increment()
-            #self.app.after(100, self._progress_bar)
+            self.app.after(100, self._progress_bar)
         else:
             self.done = True
             self.intro.hide()
@@ -528,8 +531,6 @@ class HubGui:
     def display(self):
         self.done = False
         self.intro.show()
-        while not self.done:
-            self._progress_bar()
         self.app.display()
 
 
