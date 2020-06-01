@@ -69,8 +69,8 @@ class HubGui:
     def _init_intro(self):
         self.intro = Window(self.app, bg="#171717", title="SecuriSys Central Hub", width=w, height=h)
         self.intro.set_full_screen()
-        self.intro_box = gz.Box(self.intro, width=w, height=h, layout="fill", align="left", border=False)
-        self.intro_bg = Picture(self.intro_box, image="resources/loading.png", width=self.intro_box.width, height=self.intro_box.height, align="top")
+        self.intro_box = gz.Box(self.intro, width=w, height=h, layout="fill", align="top", border=False)
+        self.intro_bg = Picture(self.intro_box, image="resources/loading.png", width=450, height=300, align="left")
         s = ttk.Style()
         s.theme_use('clam')
         s.configure("silver.Horizontal.TProgressbar", foreground='#C0C0C0', background='#171717')
