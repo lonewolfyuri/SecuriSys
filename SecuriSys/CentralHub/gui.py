@@ -71,7 +71,7 @@ class HubGui:
         self._init_loading()
 
     def _init_loading(self):
-        self.progress = ttk.Progressbar(self.intro.tk, orient=tk.HORIZONTAL, length=160, mode='determinate')
+        self.progress = ttk.Progressbar(self.intro.tk, orient=tk.HORIZONTAL, length=120, mode='determinate')
         self.progress.pack()
 
     def _show_loading(self):
@@ -518,11 +518,11 @@ class HubGui:
         print("Alarm is off!")
 
     def _get_increment(self):
-        if self.progress['value'] <= 40:
+        if self.progress['value'] <= 30:
             return 1
-        elif self.progress['value'] <= 80:
+        elif self.progress['value'] <= 60:
             return 2
-        elif self.progress['value'] <= 120:
+        elif self.progress['value'] <= 90:
             return 3
         else:
             return 2
