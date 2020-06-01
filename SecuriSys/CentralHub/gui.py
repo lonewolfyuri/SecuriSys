@@ -1,6 +1,8 @@
 import guizero as gz
 import tkinter as tk
+import tkinter.ttk as ttk
 
+from guizero import Window
 from parameters import *
 from cryptography.fernet import Fernet
 import zmq, select, pygame, fcntl, os, socket
@@ -38,6 +40,7 @@ class HubGui:
 
         self._init_net()
         self._init_music()
+        self._init_intro()
         self._init_app()
 
     def _init_net(self):
@@ -60,6 +63,15 @@ class HubGui:
         pygame.mixer.init()
         pygame.mixer.music.load("resources/alarm.mp3")
         pygame.mixer.music.set_volume(0.8)
+
+    def _init_intro(self):
+        self.intro = Window(self.app, bg="#171717", title="SecuriSys Central Hub", width=w, height=h)
+        self._init_loading()
+
+    def _init_loading(self):
+        self.progress = ttk.Progressbar(self.intro.tk, orient=tk.HORIZONTAL, length=100, mode='determinate')
+        self.progress.pack()
+        self.progress_ndx = 0
 
     def _init_app(self):
         self.app.set_full_screen()
@@ -494,7 +506,27 @@ class HubGui:
         pygame.mixer.music.stop()
         print("Alarm is off!")
 
+    def _get_increment(self):
+        self.progress_ndx += 1
+        if self.progress_ndx <= 25:
+            return 1
+        elif self.progress_ndx <= 50:
+            return 2
+        elif self.progress_ndx <= 75:
+            return 3
+        else:
+            return 2
+
+    def _progress_bar(self):
+        if self.progress['value'] < 100:
+            self.progress['value'] += self._get_increment()
+            self.app.after(100, self._progress_bar)
+        else:
+            self.intro.hide()
+
     def display(self):
+        self.intro.show()
+        self._progress_bar()
         self.app.display()
 
 
