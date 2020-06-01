@@ -74,11 +74,14 @@ class HubGui:
         self.progress = ttk.Progressbar(self.intro.tk, orient=tk.HORIZONTAL, length=200, mode='determinate')
         self.progress.pack()
 
+    def _show_loading(self):
+        self.intro.show()
+        self.intro.set_full_screen()
+
     def _init_app(self):
         self.app.set_full_screen()
         #pi dimensions: W - 500 | H - 414
         self._init_state()
-
         self._init_keyboard()
         self._init_status()
         self._init_hidden()
@@ -200,7 +203,9 @@ class HubGui:
     def _handle_sockets(self):
         if self.first:
             self.first = False
-            self.intro.show()
+            self._show_loading()
+
+        while not self.done:
             self._progress_bar()
 
         # print("Handle Sockets")
