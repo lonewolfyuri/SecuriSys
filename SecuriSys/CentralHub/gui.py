@@ -513,14 +513,12 @@ class HubGui:
 
     def _get_increment(self):
         self.progress_ndx += 1
-        if self.progress_ndx <= 25:
+        if self.progress_ndx <= 40:
             return 1
-        elif self.progress_ndx <= 50:
+        elif self.progress_ndx <= 80:
             return 2
-        elif self.progress_ndx <= 75:
-            return 3
         else:
-            return 2
+            return 1
 
     def _progress_bar(self):
         if self.first:
