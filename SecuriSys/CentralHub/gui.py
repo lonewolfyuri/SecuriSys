@@ -71,7 +71,7 @@ class HubGui:
         self.intro.set_full_screen()
         #self.intro_box = gz.Box(self.intro, width=w, height=h, layout="fill", align="top", border=False)
         #self.intro_box.tk.configure()
-        self.intro_bg = tk.Label(self.intro, image=tk.PhotoImage("resources/loading.png"))
+        self.intro_bg = tk.Label(self.intro.tk, image=tk.PhotoImage("resources/loading.png"))
         self.intro_bg.place(x=0, y=0, relwidth=1, relheight=1)
 
         s = ttk.Style()
