@@ -15,6 +15,7 @@ import zmq
 import random
 import sys
 import time
+from datetime import datetime
 
 from cryptography.fernet import Fernet
 from cryptography import *
@@ -30,20 +31,132 @@ port = "7000"
 outVideo = cv2.VideoWriter('videos/'+video_name_str, cv2.VideoWriter_fourcc(*'mp4v'), 10, (1280, 720))
 
 
-def send_packet(topic, payload):
+def send_packet(socket, topic, payload):
     packet =bytes(topic, 'utf8') + payload
     socket.send(packet)
     print("sent", topic)
     
 def encrypt_bytes(data):
-    f = Fernet(NET_KEY)
-    return f.encrypt(data)
+    return Fernet(NET_KEY).encrypt(data)
 
 def package_imgstr(frm):
     img_encode = cv2.imencode('.jpg', frm)[1]
     data_encode = np.array(img_encode)
     return data_encode.tostring()
-    
+
+def run(videostream, interpreter, socket):
+    while True:
+        next(videostream, interpreter, socket)
+        # Press 'q' to quit
+        if cv2.waitKey(1) == ord('q'):
+            break
+
+def handle_person(frame, scores, boxes):
+    ymin = int(max(1, (boxes[i][0] * imH)))
+    xmin = int(max(1, (boxes[i][1] * imW)))
+    ymax = int(min(imH, (boxes[i][2] * imH)))
+    xmax = int(min(imW, (boxes[i][3] * imW)))
+
+    cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), (10, 255, 0), 2)
+
+    label = '%s: %d%%' % ("person", int(scores[i] * 100))  # Example: 'person: 72%'
+    labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)  # Get font size
+    label_ymin = max(ymin, labelSize[1] + 10)  # Make sure not to draw label too close to top of window
+    cv2.rectangle(frame, (xmin, label_ymin - labelSize[1] - 10),
+                  (xmin + labelSize[0], label_ymin + baseLine - 10), (255, 255, 255),
+                  cv2.FILLED)  # Draw white box to put label text in
+    cv2.putText(frame, label, (xmin, label_ymin - 7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0),
+                2)  # Draw label text
+
+    return frame, True
+
+def adjust_gamma(image, gamma=1.0):
+	# build a lookup table mapping the pixel values [0, 255] to
+	# their adjusted gamma values
+	invGamma = 1.0 / gamma
+	table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
+	# apply gamma correction using the lookup table
+	return cv2.LUT(image, table)
+
+def _handle_gamma(frame):
+    hour = datetime.now().hour
+    if hour < 4 or hour >= 22:
+        return adjust_gamma(frame, 2.0)
+    elif hour < 5 or hour >= 21:
+        return adjust_gamma(frame, 1.66)
+    elif hour < 6 or hour >= 20:
+        return adjust_gamma(frame, 1.33)
+    else:
+        return frame
+
+def _get_features(interpreter, output_details):
+    # Retrieve detection results
+    boxes = interpreter.get_tensor(output_details[0]['index'])[0]  # Bounding box coordinates of detected objects
+    classes = interpreter.get_tensor(output_details[1]['index'])[0]  # Class index of detected objects
+    scores = interpreter.get_tensor(output_details[2]['index'])[0]  # Confidence of detected objects
+    # num = interpreter.get_tensor(output_details[3]['index'])[0]  # Total number of detected objects (inaccurate and not needed)
+    return boxes, classes, scores
+
+def _handle_img(frame):
+    # Acquire frame and resize to expected shape [1xHxWx3]
+    frame = _handle_gamma(frame)
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    frame_resized = cv2.resize(frame_rgb, (width, height))
+    input_data = np.expand_dims(frame_resized, axis=0)
+    return frame, frame_rgb, frame_resized, input_data
+
+def next(videostream, interpreter, socket):
+    # for frame1 in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
+    t1 = cv2.getTickCount()
+
+    # Grab frame from video stream
+    frame1 = videostream.read()
+
+    # Acquire frame and resize to expected shape [1xHxWx3]
+    frame, frame_rgb, frame_resized, input_data = _handle_img(frame1.copy())
+
+    # Normalize pixel values if using a floating model (i.e. if model is non-quantized)
+    if floating_model:
+        input_data = (np.float32(input_data) - input_mean) / input_std
+
+    # Perform the actual detection by running the model with the image as input
+    interpreter.set_tensor(input_details[0]['index'], input_data)
+    interpreter.invoke()
+    boxes, classes, scores = _get_features(interpreter, output_details)
+
+    # Loop over all detections and draw detection box if confidence is above minimum threshold
+    # for i in range(len(scores)):
+    send_ss_topic = False
+
+    for i in range(len(scores)):  # just loop[ over the person object
+        if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
+            # Get bounding box coordinates and draw box
+            # Interpreter can return coordinates that are outside of image dimensions, need to force them to be within image using max() and min()
+            # Draw label
+            object_name = labels[int(classes[i])]  # Look up object name from "labels" array using class index
+            # object_name= labels
+            if (object_name == "person"):
+                frame, sens_ss_topic = handle_person(frame, scores, boxes)
+
+    # package, encrypt, and publish our packets
+    imgStr = package_imgstr(frame)
+
+    payload = encrypt_bytes(imgStr)
+    if (send_ss_topic):
+        send_packet(socket, SCREENSHOT_TOPIC, payload)
+    send_packet(socket, FOOTAGE_TOPIC, payload)
+
+    # Draw framerate in corner of frame
+    cv2.putText(frame, 'FPS: {0:.2f}'.format(frame_rate_calc), (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2,
+                cv2.LINE_AA)
+
+    # All the results have been drawn on the frame, so it's time to display it.
+    cv2.imshow('Object detector', frame)
+
+    # Calculate framerate
+    t2 = cv2.getTickCount()
+    time1 = (t2 - t1) / freq
+    frame_rate_calc = 1 / time1
 
 
 # Define VideoStream class to handle streaming of video from webcam in separate processing thread
@@ -164,100 +277,11 @@ freq = cv2.getTickFrequency()
 videostream = VideoStream(resolution=(imW,imH),framerate=10).start()
 time.sleep(1)
 
-
-
-
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
 socket.bind("tcp://*:%s" % port)
 
-#for frame1 in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
-while True:
-
-    # Start timer (for calculating frame rate)
-    t1 = cv2.getTickCount()
-
-    # Grab frame from video stream
-    frame1 = videostream.read()
-
-    # Acquire frame and resize to expected shape [1xHxWx3]
-    frame = frame1.copy()
-    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    frame_resized = cv2.resize(frame_rgb, (width, height))
-    input_data = np.expand_dims(frame_resized, axis=0)
-
-    # Normalize pixel values if using a floating model (i.e. if model is non-quantized)
-    if floating_model:
-        input_data = (np.float32(input_data) - input_mean) / input_std
-
-    # Perform the actual detection by running the model with the image as input
-    interpreter.set_tensor(input_details[0]['index'],input_data)
-    interpreter.invoke()
-
-    # Retrieve detection results
-    boxes = interpreter.get_tensor(output_details[0]['index'])[0] # Bounding box coordinates of detected objects
-    classes = interpreter.get_tensor(output_details[1]['index'])[0] # Class index of detected objects
-    scores = interpreter.get_tensor(output_details[2]['index'])[0] # Confidence of detected objects
-    #num = interpreter.get_tensor(output_details[3]['index'])[0]  # Total number of detected objects (inaccurate and not needed)
-
-    # Loop over all detections and draw detection box if confidence is above minimum threshold
-    #for i in range(len(scores)):
-    send_ss_topic = False
-    
-    for i in range(len(scores)):#just loop[ over the person object
-        if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
-
-            # Get bounding box coordinates and draw box
-            # Interpreter can return coordinates that are outside of image dimensions, need to force them to be within image using max() and min()
-            
-
-            # Draw label
-            object_name = labels[int(classes[i])] # Look up object name from "labels" array using class index
-            #object_name= labels
-            
-            
-            if (object_name == "person"):
-                ymin = int(max(1,(boxes[i][0] * imH)))
-                xmin = int(max(1,(boxes[i][1] * imW)))
-                ymax = int(min(imH,(boxes[i][2] * imH)))
-                xmax = int(min(imW,(boxes[i][3] * imW)))
-
-                cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), (10, 255, 0), 2)
-                
-                label = '%s: %d%%' % (object_name, int(scores[i]*100)) # Example: 'person: 72%'
-                labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2) # Get font size
-                label_ymin = max(ymin, labelSize[1] + 10) # Make sure not to draw label too close to top of window
-                cv2.rectangle(frame, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), (255, 255, 255), cv2.FILLED) # Draw white box to put label text in
-                cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
-
-                send_ss_topic = True
-                
-                
-                
-    #package, encrypt, and publish our packets            
-    imgStr = package_imgstr(frame)
-    
-    payload = encrypt_bytes(imgStr)
-    if (send_ss_topic):
-        send_packet(SCREENSHOT_TOPIC, payload)
-
-    send_packet(FOOTAGE_TOPIC, payload)
-  
-            
-    # Draw framerate in corner of frame
-    cv2.putText(frame,'FPS: {0:.2f}'.format(frame_rate_calc),(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)
-
-    # All the results have been drawn on the frame, so it's time to display it.
-    cv2.imshow('Object detector', frame)
-
-    # Calculate framerate
-    t2 = cv2.getTickCount()
-    time1 = (t2-t1)/freq
-    frame_rate_calc= 1/time1
-
-    # Press 'q' to quit
-    if cv2.waitKey(1) == ord('q'):
-        break
+run(videostream, interpreter, socket)
 
 # Clean up
 cv2.destroyAllWindows()
