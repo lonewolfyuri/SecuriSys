@@ -34,7 +34,7 @@ port = "7000"
 HOUR = 20
 
 ###for initial construction
-outVideo = cv2.VideoWriter('videos/'+video_name_str, cv2.VideoWriter_fourcc(*'mp4v'), 10, (1280, 720))
+outVideo = cv2.VideoWriter('output/video.avi', cv2.VideoWriter_fourcc(*'mjpg'), 10, (1280, 720))
 
 
 def send_packet(socket, topic, payload):
@@ -177,6 +177,10 @@ def next(videostream, interpreter, socket, outVideo):
     if (send_ss_topic):
         send_packet(socket, SCREENSHOT_TOPIC, payload)
 
+    
+    t2 = cv2.getTickCount()
+    time1 = (t2 - t1) / freq
+    frame_rate_calc = 1 / time1
     # Draw framerate in corner of frame
     cv2.putText(frame, 'FPS: {0:.2f}'.format(frame_rate_calc), (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2, cv2.LINE_AA)
 
@@ -184,9 +188,7 @@ def next(videostream, interpreter, socket, outVideo):
     cv2.imshow('Object detector', frame)
 
     # Calculate framerate
-    t2 = cv2.getTickCount()
-    time1 = (t2 - t1) / freq
-    frame_rate_calc = 1 / time1
+    
 
 
 # Define VideoStream class to handle streaming of video from webcam in separate processing thread
@@ -232,11 +234,10 @@ class VideoStream:
         self.stopped = True
 
 MODEL_NAME = "Sample_TFLite_model"
-GRAPH_NAME = args.graph
-LABELMAP_NAME = args.labels
-min_conf_threshold = float(args.threshold)
-resW, resH = args.resolution.split('x')
-imW, imH = int(resW), int(resH)
+GRAPH_NAME = 'detect.tflite'
+LABELMAP_NAME = 'labelmap.txt'
+min_conf_threshold = float(.50)
+imW, imH = int(1280), int(720)
 use_TPU = True
 
 # Import TensorFlow libraries
