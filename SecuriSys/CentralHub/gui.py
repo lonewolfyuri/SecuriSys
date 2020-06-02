@@ -121,57 +121,101 @@ class HubGui:
         self.key_align_box.tk.configure(highlightcolor="#171717")
         self.key_align_box.tk.configure(highlightbackground="#171717")
 
+        buttons = []
+        boxes = []
+
         curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[0,0])
         curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_1_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
+
+        buttons.append(curBtn)
+        boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[1, 0])
         curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_2_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
+        buttons.append(curBtn)
+        boxes.append(curBox)
+
         curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[2, 0])
         curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_3_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
+
+        buttons.append(curBtn)
+        boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[0, 1])
         curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_4_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
+        buttons.append(curBtn)
+        boxes.append(curBox)
+
         curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[1, 1])
         curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_5_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
+
+        buttons.append(curBtn)
+        boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[2, 1])
         curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_6_black_smol.gif",command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
+        buttons.append(curBtn)
+        boxes.append(curBox)
+
         curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[0, 2])
         curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_7_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
+
+        buttons.append(curBtn)
+        boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[1, 2])
         curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_8_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
+        buttons.append(curBtn)
+        boxes.append(curBox)
+
         curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[2, 2])
         curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_9_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
+
+        buttons.append(curBtn)
+        boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[1, 3])
         curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_0_black_smol.gif",command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
-        for child in self.key_align_box.tk.winfo_children():
+        buttons.append(curBtn)
+        boxes.append(curBox)
+
+        for button in buttons:
+            child = button.tk
+            child.configure(background="#171717")
+            child.configure(bg="#171717")
+            child.configure(borderwidth=0)
+            child.configure(bd=0)
+            child.configure(highlightthickness=0)
+            child.configure(highlightcolor="#171717")
+            child.configure(highlightbackground="#171717")
+
+        for box in boxes:
+            child = box.tk
             child.configure(background="#171717")
             child.configure(bg="#171717")
             child.configure(borderwidth=0)
