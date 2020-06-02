@@ -2,7 +2,6 @@ import guizero as gz
 import tkinter as tk
 import tkinter.ttk as ttk
 
-from PIL import Image
 from guizero import Window, Picture
 from parameters import *
 from cryptography.fernet import Fernet
