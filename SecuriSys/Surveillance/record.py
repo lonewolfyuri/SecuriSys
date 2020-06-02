@@ -30,11 +30,14 @@ import zmq
 import random
 import sys
 import time
+
+from cryptography.fernet import Fernet
 from parameters import *
 
 import base64
 from os import path
 import datetime
+from cryptography import *
 
 port = "7000"
 ss_topic = "10003"
