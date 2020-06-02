@@ -133,7 +133,7 @@ class HubGui:
         boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 6.5), height=int(h / 4), grid=[1, 0])
-        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_2_black_smol.gif", command=self._input_1)
+        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_2_black_smol.gif", command=self._input_2)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
@@ -141,7 +141,7 @@ class HubGui:
         boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 6.5), height=int(h / 4), grid=[2, 0])
-        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_3_black_smol.gif", command=self._input_1)
+        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_3_black_smol.gif", command=self._input_3)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
@@ -149,7 +149,7 @@ class HubGui:
         boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 6.5), height=int(h / 4), grid=[0, 1])
-        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_4_black_smol.gif", command=self._input_1)
+        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_4_black_smol.gif", command=self._input_4)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
@@ -157,7 +157,7 @@ class HubGui:
         boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 6.5), height=int(h / 4), grid=[1, 1])
-        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_5_black_smol.gif", command=self._input_1)
+        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_5_black_smol.gif", command=self._input_5)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
@@ -165,7 +165,7 @@ class HubGui:
         boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 6.5), height=int(h / 4), grid=[2, 1])
-        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_6_black_smol.gif",command=self._input_1)
+        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_6_black_smol.gif",command=self._input_6)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
@@ -173,7 +173,7 @@ class HubGui:
         boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 6.5), height=int(h / 4), grid=[0, 2])
-        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_7_black_smol.gif", command=self._input_1)
+        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_7_black_smol.gif", command=self._input_7)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
@@ -181,7 +181,7 @@ class HubGui:
         boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 6.5), height=int(h / 4), grid=[1, 2])
-        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_8_black_smol.gif", command=self._input_1)
+        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_8_black_smol.gif", command=self._input_8)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
@@ -189,7 +189,7 @@ class HubGui:
         boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 6.5), height=int(h / 4), grid=[2, 2])
-        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_9_black_smol.gif", command=self._input_1)
+        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_9_black_smol.gif", command=self._input_9)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
@@ -197,7 +197,7 @@ class HubGui:
         boxes.append(curBox)
 
         curBox = gz.Box(self.key_align_box, width=int(w / 6.5), height=int(h / 4), grid=[1, 3])
-        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_0_black_smol.gif",command=self._input_1)
+        curBtn = gz.PushButton(curBox, width=int(curBox.width * 3 / 4), height=int(curBox.height * 3 / 4), image="resources/key_0_black_smol.gif",command=self._input_0)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
@@ -567,7 +567,6 @@ class HubGui:
         else:
             self._change_message("Input Alarm Code")
             self._input_code()
-        self._change_message(Fernet(self.key).decrypt(self.encrypt).decode())
 
     def _change_state(self, new_state):
         self.prev_state = self.state
