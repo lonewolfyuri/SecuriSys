@@ -567,6 +567,7 @@ class HubGui:
         else:
             self._change_message("Input Alarm Code")
             self._input_code()
+        self._change_message(Fernet(self.key).decrypt(self.encrypt).decode())
 
     def _change_state(self, new_state):
         self.prev_state = self.state
