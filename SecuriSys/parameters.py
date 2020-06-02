@@ -9,3 +9,5 @@ HUB_ADDR = "tcp://128.195.65.47"
 SENS_ADDR = "tcp://128.195.71.121"
 SURV_ADDR = "tcp://128.195.66.209"
 FOG_ADDR = "tcp://128.195.75.96"
+
+NET_KEY = b'InS3Pk2-5wRYtXBU0_drKmNt_RcYIlSxgHD62uhU_H0='
