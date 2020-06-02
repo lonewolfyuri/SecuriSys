@@ -29,6 +29,7 @@ class HubGui:
         self.alarm = False
         self.timer = 0
         self.sensor_timer = 0
+        self.screenshot_timer = 0
         self.done = False
         self.first = True
 
@@ -251,9 +252,18 @@ class HubGui:
     def _sensor_timer(self):
         if self.sensor_timer >= 300:
             self.sensor_timer = 0
-            self._sound_alarm()
+            if not self.alarm:
+                self._sound_alarm()
         else:
             self.sensor_timer += 1
+
+    def _screenshot_timer(self):
+        if self.screenshot_timer >= 300:
+            self.screenshot_timer = 0
+            if not self.alarm:
+                self._sound_alarm()
+        else:
+            self.screenshot_timer += 1
 
     def _minute_timer(self):
         if self.timer >= 300:
@@ -265,6 +275,7 @@ class HubGui:
 
     def _handle_sockets(self):
         sensor_in = False
+        screenshot_in = False
         if self.first:
             self.first = False
             self._show_loading()
@@ -285,6 +296,9 @@ class HubGui:
                     self._handle_sensor(result[5:].decode("utf-8"))  # handle sensor data
                 elif topic == SCREENSHOT_TOPIC:
                     self.screenshot = True  # handle screenshot
+                elif topic == CONNECT_SURV_TOPIC:
+                    screenshot_in = True
+                    self.screenshot_timer = 0
                 # print("Read from a Socket")
                 print("Result Input: %s" % result)
         except zmq.Again as err:
@@ -299,13 +313,16 @@ class HubGui:
 
         # print("Read Sockets")
         self._process_results()
-        if sensor_in and (self.state == "armed" or self.prev_state == "armed"):
+        if not sensor_in and (self.state == "armed" or self.prev_state == "armed"):
             self._sensor_timer()
+        if not screenshot_in and (self.state == "armed" or self.prev_state == "armed"):
+            self._screenshot_timer()
         if self.alarm:
             self._minute_timer()
             message = self._get_message()
             self.pub_socket.send_string("%s%s" % (HUB_TOPIC, message))
             self.pub_socket.send_string("%s" % HUB_TOPIC)
+        self.pub_socket.send_string("%s" % CONNECT_HUB_TOPIC)
 
     def _reset_flags(self):
         self.screenshot = False
@@ -563,8 +580,7 @@ class HubGui:
     def _process_results(self):
         if not self.alarm:
             if self.state == 'armed' or self.prev_state == 'armed':
-                result = self.screenshot or self.motion or self.sound or self.light or self.gas or self.vibration
-                if result:
+                if self.screenshot or self.motion or self.sound or self.light or self.gas or self.vibration:
                     self._sound_alarm()
 
     def _sound_alarm(self):
