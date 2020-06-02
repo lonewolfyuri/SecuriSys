@@ -51,7 +51,7 @@ def run(videostream, interpreter, socket):
         if cv2.waitKey(1) == ord('q'):
             break
 
-def handle_person(frame, scores, boxes):
+def handle_person(frame, scores, boxes, i):
     ymin = int(max(1, (boxes[i][0] * imH)))
     xmin = int(max(1, (boxes[i][1] * imW)))
     ymax = int(min(imH, (boxes[i][2] * imH)))
@@ -136,7 +136,7 @@ def next(videostream, interpreter, socket):
             object_name = labels[int(classes[i])]  # Look up object name from "labels" array using class index
             # object_name= labels
             if (object_name == "person"):
-                frame, sens_ss_topic = handle_person(frame, scores, boxes)
+                frame, sens_ss_topic = handle_person(frame, scores, boxes, i)
 
     # package, encrypt, and publish our packets
     imgStr = package_imgstr(frame)
