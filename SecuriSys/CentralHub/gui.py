@@ -264,6 +264,7 @@ class HubGui:
             self.timer += 1
 
     def _handle_sockets(self):
+        sensor_in = False
         if self.first:
             self.first = False
             self._show_loading()
@@ -279,6 +280,7 @@ class HubGui:
                 topic = result[0:5].decode("utf-8")
                 print("Topic: %s" % topic)
                 if topic == SENSOR_TOPIC:
+                    sensor_in = True
                     self.sensor_timer = 0
                     self._handle_sensor(result[5:].decode("utf-8"))  # handle sensor data
                 elif topic == SCREENSHOT_TOPIC:
@@ -297,9 +299,10 @@ class HubGui:
 
         # print("Read Sockets")
         self._process_results()
-        self._sensor_timer();
+        if sensor_in and (self.state == "armed" or self.prev_state == "armed"):
+            self._sensor_timer()
         if self.alarm:
-            self._minute_timer();
+            self._minute_timer()
             message = self._get_message()
             self.pub_socket.send_string("%s%s" % (HUB_TOPIC, message))
             self.pub_socket.send_string("%s" % HUB_TOPIC)
