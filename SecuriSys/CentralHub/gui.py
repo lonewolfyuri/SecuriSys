@@ -273,6 +273,12 @@ class HubGui:
         else:
             self.timer += 1
 
+    def _encrypt_payload(self, payload):
+        return Fernet(NET_KEY).encrypt(payload)
+
+    def _decrypt_payload(self, payload):
+        return Fernet(NET_KEY).decrypt(payload)
+
     def _handle_sockets(self):
         sensor_in = False
         screenshot_in = False
@@ -293,7 +299,7 @@ class HubGui:
                 if topic == SENSOR_TOPIC:
                     sensor_in = True
                     self.sensor_timer = 0
-                    self._handle_sensor(result[5:].decode("utf-8"))  # handle sensor data
+                    self._handle_sensor(self._decrypt_payload(result[5:].decode("utf-8")))  # handle sensor data
                 elif topic == SCREENSHOT_TOPIC:
                     self.screenshot = True  # handle screenshot
                 elif topic == CONNECT_SURV_TOPIC:
@@ -320,7 +326,7 @@ class HubGui:
         if self.alarm:
             self._minute_timer()
             message = self._get_message()
-            self.pub_socket.send_string("%s%s" % (HUB_TOPIC, message))
+            self.pub_socket.send_string("%s%s" % (HUB_TOPIC, self._encrypt_payload(message)))
             self.pub_socket.send_string("%s" % HUB_TOPIC)
         self.pub_socket.send_string("%s" % CONNECT_HUB_TOPIC)
 

@@ -5,16 +5,27 @@ import time
 from sensor import Sensor
 from parameters import *
 
-port = "6000"
-if len(sys.argv) > 1:
-    port = sys.argv[1]
+def init():
+    sen = Sensor()
+    topic = "10002"
+    port = "6000"
+    if len(sys.argv) > 1:
+        port = sys.argv[1]
+    context = zmq.Context()
+    socket = context.socket(zmq.PUB)
+    socket.bind("tcp://*:%s" % port)
+    return sen, topic, socket
 
-context = zmq.Context()
-socket = context.socket(zmq.PUB)
-socket.bind("tcp://*:%s" % port)
+def run(sen, topic, socket):
+    while True:
+        next()
+        time.sleep(0.1)
 
-sen = Sensor()
-topic = "10002"
+def next(sen, topic, socket):
+    senVals = sen.get_sample()
+    messagedata = binarySensor(senVals);
+    print(topic + messagedata)
+    socket.send_string("%s%s" % (topic, _encrypt_payload(messagedata)))
 
 def binarySensor(senVals):
     vals = ""
@@ -22,9 +33,5 @@ def binarySensor(senVals):
         vals += str(x);
     return vals;
 
-while True:
-    senVals = sen.get_sample()
-    messagedata = binarySensor(senVals);
-    print (topic+messagedata)
-    socket.send_string((topic+messagedata))
-    time.sleep(0.1)
+sen, topic, socket = init()
+run(sen, topic, socket)

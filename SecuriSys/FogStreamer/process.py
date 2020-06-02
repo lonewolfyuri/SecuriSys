@@ -180,8 +180,7 @@ class Fog:
             self._init_footage()
             
     def _decrypt_payload(self, payload):
-        f = Fernet(NET_KEY)
-        return f.decrypt(payload)
+        return Fernet(NET_KEY).decrypt(payload)
 
     def run(self):
         while True:
@@ -193,7 +192,7 @@ class Fog:
                 if result:
                     topic = result[0:5].decode("utf-8")
                     if topic == HUB_TOPIC:
-                        self._handle_hub(result[5:].decode("utf-8"))
+                        self._handle_hub(self._decrypt_payload(result[5:].decode("utf-8")))
                         print("Result: %s" % result)
                     elif topic == SCREENSHOT_TOPIC:
                         self._handle_screenshot(self._decrypt_payload(result[5:]))
