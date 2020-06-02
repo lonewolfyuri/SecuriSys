@@ -45,11 +45,13 @@ def package_imgstr(frm):
     return data_encode.tostring()
 
 def run(videostream, interpreter, socket):
+    ndx = 0
     while True:
-        next(videostream, interpreter, socket)
+        next(ndx, videostream, interpreter, socket)
         # Press 'q' to quit
         if cv2.waitKey(1) == ord('q'):
             break
+        ndx += 1
 
 def handle_person(frame, scores, boxes, i):
     ymin = int(max(1, (boxes[i][0] * imH)))
@@ -102,7 +104,7 @@ def _handle_img(frame):
     input_data = np.expand_dims(frame_resized, axis=0)
     return frame, frame_rgb, frame_resized, input_data
 
-def next(videostream, interpreter, socket):
+def next(ndx, videostream, interpreter, socket):
     # for frame1 in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
     t1 = cv2.getTickCount()
 
@@ -142,6 +144,9 @@ def next(videostream, interpreter, socket):
     if (send_ss_topic):
         send_packet(socket, SCREENSHOT_TOPIC, payload)
     send_packet(socket, FOOTAGE_TOPIC, payload)
+    if ndx > 10:
+        ndx = 0
+        send_packet(socket, CONNECT_SURV_TOPIC, "")
 
     # Draw framerate in corner of frame
     cv2.putText(frame, 'FPS: {0:.2f}'.format(frame_rate_calc), (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2, cv2.LINE_AA)
