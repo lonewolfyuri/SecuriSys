@@ -121,43 +121,53 @@ class HubGui:
         self.key_align_box.tk.configure(highlightcolor="#171717")
         self.key_align_box.tk.configure(highlightbackground="#171717")
 
-        curBtn = gz.PushButton(self.key_align_box, padx=int(w / 14), pady=int(h / 8), width=int(w / 7), height=int(h / 4), image="resources/key_1_black_smol.gif", command=self._input_1, grid=[0,0])
+        curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[0,0])
+        curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_1_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=int(w / 14), pady=int(h / 8), width=int(w / 7), height=int(h / 4), image="resources/key_2_black_smol.gif", command=self._input_2, grid=[1,0])
+        curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[1, 0])
+        curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_2_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=int(w / 14), pady=int(h / 8), width=int(w / 7), height=int(h / 4), image="resources/key_3_black_smol.gif", command=self._input_3, grid=[2,0])
+        curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[2, 0])
+        curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_3_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=int(w / 14), pady=int(h / 8), width=int(w / 7), height=int(h / 4), image="resources/key_4_black_smol.gif", command=self._input_4, grid=[0,1])
+        curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[0, 1])
+        curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_4_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=int(w / 14), pady=int(h / 8), width=int(w / 7), height=int(h / 4), image="resources/key_5_black_smol.gif", command=self._input_5, grid=[1,1])
+        curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[1, 1])
+        curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_5_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=int(w / 14), pady=int(h / 8), width=int(w / 7), height=int(h / 4), image="resources/key_6_black_smol.gif", command=self._input_6, grid=[2,1])
+        curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[2, 1])
+        curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_6_black_smol.gif",command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=int(w / 14), pady=int(h / 8), width=int(w / 7), height=int(h / 4), image="resources/key_7_black_smol.gif", command=self._input_7, grid=[0,2])
+        curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[0, 2])
+        curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_7_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=int(w / 14), pady=int(h / 8), width=int(w / 7), height=int(h / 4), image="resources/key_8_black_smol.gif", command=self._input_8, grid=[1,2])
+        curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[1, 2])
+        curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_8_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=int(w / 14), pady=int(h / 8), width=int(w / 7), height=int(h / 4), image="resources/key_9_black_smol.gif", command=self._input_9, grid=[2,2])
+        curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[2, 2])
+        curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_9_black_smol.gif", command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
-        curBtn = gz.PushButton(self.key_align_box, padx=int(w / 14), pady=int(h / 8), width=int(w / 7), height=int(h / 4), image="resources/key_0_black_smol.gif", command=self._input_0, grid=[1,3])
+        curBox = gz.Box(self.key_align_box, width=int(w / 7), height=int(h / 4), grid=[1, 3])
+        curBtn = gz.PushButton(curBox, width=int(curBox.width / 2), image="resources/key_0_black_smol.gif",command=self._input_1)
         curBtn.bg = "#171717"
         curBtn.text_color = "#171717"
 
