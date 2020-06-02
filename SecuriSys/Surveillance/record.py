@@ -69,7 +69,7 @@ def run(videostream, interpreter, socket, bucket):
 
 def init_client():
     client = storage.Client()  # options: project, credentials, http
-    bucket = client.get_bucket('securisys-hub')
+    bucket = client.get_bucket('securisys-footage')
     return client, bucket
 
 def handle_person(frame, scores, boxes, i):
