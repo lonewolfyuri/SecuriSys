@@ -199,7 +199,7 @@ class Fog:
                         self._handle_screenshot(self._decrypt_payload(result[5:]))
                     elif topic == FOOTAGE_TOPIC:
                         self._handle_footage(self._decrypt_payload(result[5:]))
-                    elif topic == CONNECT_TOPIC:
+                    elif topic == CONNECT_HUB_TOPIC:
                         self.hub_timer = time.time()
             except zmq.Again as err:
                 print(err)
