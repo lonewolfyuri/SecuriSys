@@ -18,6 +18,7 @@ import time
 from datetime import datetime
 
 from cryptography.fernet import Fernet
+from gcloud import storage
 from cryptography import *
 from parameters import *
 
@@ -25,7 +26,12 @@ import base64
 from os import path
 import datetime
 
+frame_width = 1280
+frame_height = 720
 port = "7000"
+
+#HOUR = 3600 # one hour = 60 minutes = 3600 seconds (time.time() is in seconds)
+HOUR = 20
 
 ###for initial construction
 outVideo = cv2.VideoWriter('videos/'+video_name_str, cv2.VideoWriter_fourcc(*'mp4v'), 10, (1280, 720))
@@ -44,14 +50,23 @@ def package_imgstr(frm):
     data_encode = np.array(img_encode)
     return data_encode.tostring()
 
-def run(videostream, interpreter, socket):
+def run(videostream, interpreter, socket, bucket):
     ndx = 0
+    outVideo, start, footage_dt = _init_footage()
     while True:
-        next(ndx, videostream, interpreter, socket)
+        next(ndx, videostream, interpreter, socket, outVideo)
+        if time.time() - start >= HOUR:
+            _ship_footage(bucket, footage_dt)
+            outVideo, start, footage_dt = _init_footage()
         # Press 'q' to quit
         if cv2.waitKey(1) == ord('q'):
             break
         ndx += 1
+
+def init_client():
+    client = storage.Client()  # options: project, credentials, http
+    bucket = client.get_bucket('securisys-hub')
+    return client, bucket
 
 def handle_person(frame, scores, boxes, i):
     ymin = int(max(1, (boxes[i][0] * imH)))
@@ -104,7 +119,20 @@ def _handle_img(frame):
     input_data = np.expand_dims(frame_resized, axis=0)
     return frame, frame_rgb, frame_resized, input_data
 
-def next(ndx, videostream, interpreter, socket):
+def _init_footage():
+    try:
+        os.remove("output/video.avi")
+    except:
+        pass
+
+    return cv2.VideoWriter('output/video.avi', cv2.VideoWriter_fourcc(*'mjpg'), 10, (frame_width, frame_height)), None, datetime.now()
+
+def _ship_footage(bucket, footage_dt):
+    # figure out how to push video to the cloud
+    blob = bucket.blob(footage_dt.strftime('%m-%d-%Y_%H-%M-%S_%f.avi'))
+    blob.upload_from_filename(filename='output/video.avi')
+
+def next(ndx, videostream, interpreter, socket, outVideo):
     # for frame1 in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
     t1 = cv2.getTickCount()
 
@@ -138,12 +166,12 @@ def next(ndx, videostream, interpreter, socket):
                 frame, sens_ss_topic = handle_person(frame, scores, boxes, i)
 
     # package, encrypt, and publish our packets
+    outVideo.write(frame)
     imgStr = package_imgstr(frame)
 
     payload = encrypt_bytes(imgStr)
     if (send_ss_topic):
         send_packet(socket, SCREENSHOT_TOPIC, payload)
-    send_packet(socket, FOOTAGE_TOPIC, payload)
     if ndx > 10:
         ndx = 0
         send_packet(socket, CONNECT_SURV_TOPIC, "")
@@ -251,8 +279,7 @@ if labels[0] == '???':
 # Load the Tensorflow Lite model.
 # If using Edge TPU, use special load_delegate argument
 if use_TPU:
-    interpreter = Interpreter(model_path=PATH_TO_CKPT,
-                              experimental_delegates=[load_delegate('libedgetpu.so.1.0')])
+    interpreter = Interpreter(model_path=PATH_TO_CKPT, experimental_delegates=[load_delegate('libedgetpu.so.1.0')])
     print(PATH_TO_CKPT)
 else:
     interpreter = Interpreter(model_path=PATH_TO_CKPT)
@@ -282,7 +309,8 @@ context = zmq.Context()
 socket = context.socket(zmq.PUB)
 socket.bind("tcp://*:%s" % port)
 
-run(videostream, interpreter, socket)
+client, bucket = init_client()
+run(videostream, interpreter, socket, bucket)
 
 # Clean up
 cv2.destroyAllWindows()
