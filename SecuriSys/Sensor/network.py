@@ -4,6 +4,7 @@ import sys
 import time
 from sensor import Sensor
 from parameters import *
+from cryptography.fernet import Fernet
 
 def init():
     sen = Sensor()
@@ -20,6 +21,9 @@ def run(sen, topic, socket):
     while True:
         next()
         time.sleep(0.1)
+
+def _encrypt_payload(self, payload):
+    return Fernet(NET_KEY).encrypt(payload)
 
 def next(sen, topic, socket):
     senVals = sen.get_sample()
