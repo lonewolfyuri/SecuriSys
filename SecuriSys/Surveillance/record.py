@@ -54,14 +54,18 @@ def run(videostream, interpreter, socket, bucket):
     ndx = 0
     outVideo, start, footage_dt = _init_footage()
     while True:
-        next(ndx, videostream, interpreter, socket, outVideo)
+        next(videostream, interpreter, socket, outVideo)
         if time.time() - start >= HOUR:
             _ship_footage(bucket, footage_dt)
             outVideo, start, footage_dt = _init_footage()
         # Press 'q' to quit
         if cv2.waitKey(1) == ord('q'):
             break
-        ndx += 1
+        if ndx > 10:
+            ndx = 0
+            send_packet(socket, CONNECT_SURV_TOPIC, "")
+        else:
+            ndx += 1
 
 def init_client():
     client = storage.Client()  # options: project, credentials, http
@@ -132,7 +136,7 @@ def _ship_footage(bucket, footage_dt):
     blob = bucket.blob(footage_dt.strftime('%m-%d-%Y_%H-%M-%S_%f.avi'))
     blob.upload_from_filename(filename='output/video.avi')
 
-def next(ndx, videostream, interpreter, socket, outVideo):
+def next(videostream, interpreter, socket, outVideo):
     # for frame1 in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
     t1 = cv2.getTickCount()
 
@@ -172,9 +176,6 @@ def next(ndx, videostream, interpreter, socket, outVideo):
     payload = encrypt_bytes(imgStr)
     if (send_ss_topic):
         send_packet(socket, SCREENSHOT_TOPIC, payload)
-    if ndx > 10:
-        ndx = 0
-        send_packet(socket, CONNECT_SURV_TOPIC, "")
 
     # Draw framerate in corner of frame
     cv2.putText(frame, 'FPS: {0:.2f}'.format(frame_rate_calc), (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2, cv2.LINE_AA)
