@@ -1,21 +1,6 @@
 #run with the following command:
-#python3 TFLite_detection_webcam.py --modeldir=Sample_TFLite_model --edgetpu
+#python3 record.py
 
-
-
-######## Webcam Object Detection Using Tensorflow-trained Classifier #########
-#
-# Author: Evan Juras, modified by Benjamin Nolpho Group6 CS190
-# Description: 
-# This program uses a TensorFlow Lite model to perform object detection on a live webcam
-# feed. It draws boxes and scores around the objects of interest in each frame from the
-# webcam. To improve FPS, the webcam object runs in a separate thread from the main program.
-# This script will work with either a Picamera or regular USB webcam.
-#
-# This code is based off the TensorFlow Lite image classification example at:
-# https://github.com/tensorflow/tensorflow/blob/master/tensorflow/lite/examples/python/label_image.py
-#
-# I added my own method of drawing boxes and labels using OpenCV.
 
 # Import packages
 import os
@@ -32,41 +17,33 @@ import sys
 import time
 
 from cryptography.fernet import Fernet
+from cryptography import *
 from parameters import *
 
 import base64
 from os import path
 import datetime
-from cryptography import *
 
 port = "7000"
-ss_topic = "10003"
-vid_topic = "10004"
-
-frame_width = 1280
-frame_height = 720
-
-videoFramesStr = ""
-videoCounter = 0
-
-#**fog**
-currentDT = datetime.datetime.now()
-year = currentDT.year
-month = currentDT.month
-day = currentDT.day
-hour = currentDT.hour
-minute = currentDT.minute
-second = currentDT.second
-
-video_name_str = "video_y{0}m{1:02d}d{2:02d}_h{3:02d}m{4:02d}s{5:02d}.avi".format(year,month,day,hour,minute,second)
-
-
 
 ###for initial construction
-outVideo = cv2.VideoWriter('videos/'+video_name_str, cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
+outVideo = cv2.VideoWriter('videos/'+video_name_str, cv2.VideoWriter_fourcc(*'mp4v'), 10, (1280, 720))
 
 
+def send_packet(topic, payload):
+    packet =bytes(topic, 'utf8') + payload
+    socket.send(packet)
+    print("sent", topic)
+    
+def encrypt_bytes(data):
+    f = Fernet(NET_KEY)
+    return f.encrypt(data)
 
+def package_imgstr(frm):
+    img_encode = cv2.imencode('.jpg', frm)[1]
+    data_encode = np.array(img_encode)
+    return data_encode.tostring()
+    
 
 
 # Define VideoStream class to handle streaming of video from webcam in separate processing thread
@@ -110,19 +87,6 @@ class VideoStream:
     def stop(self):
 	# Indicate that the camera and thread should be stopped
         self.stopped = True
-
-# Define and parse input arguments
-parser = argparse.ArgumentParser()
-parser.add_argument('--graph', help='Name of the .tflite file, if different than detect.tflite',
-                    default='detect.tflite')
-parser.add_argument('--labels', help='Name of the labelmap file, if different than labelmap.txt',
-                    default='labelmap.txt')
-parser.add_argument('--threshold', help='Minimum confidence threshold for displaying detected objects',
-                    default=0.5)
-parser.add_argument('--resolution', help='Desired webcam resolution in WxH. If the webcam does not support the resolution entered, errors may occur.',
-                    default='1280x720')
-
-args = parser.parse_args()
 
 MODEL_NAME = "Sample_TFLite_model"
 GRAPH_NAME = args.graph
@@ -269,46 +233,15 @@ while True:
                 send_ss_topic = True
                 
                 
-            
-    #we just write to the video (10004) but no ss (10003)
-    #add image to video string
-    img_encode = cv2.imencode('.jpg', frame)[1]
-    data_encode = np.array(img_encode)
-    rawImgStr = data_encode.tostring()
-
-    #encode the image using symetric key encryption
-    f = Fernet(NET_KEY)
-    imgStr = f.encrypt(rawImgStr)
-
-    if (send_ss_topic):
-        ss_packet =bytes(ss_topic, 'utf8') + imgStr
-        socket.send(ss_packet)
-        print("sent", ss_topic)
-
-
-    ##only sendin 1 image this time
-    vid_packet = bytes(vid_topic, 'utf8') + imgStr
-    socket.send(vid_packet)
-    print("sent", vid_topic)
-
-
-        
-        
-        
-        
-        
-        
-        
-#         videoFramesStr = "%s\n" % (imgStr)
-#         videoCounter+=1
-        
-#         if (videoCounter == 10):#if we ahve 10 images, we will push them all!
-#             socket.send_string("%d%s" % (vid_topic, videoFramesStr))
-#             videoFramesStr = ""
-#             videoCounter=0
-            
-            
                 
+    #package, encrypt, and publish our packets            
+    imgStr = package_imgstr(frame)
+    
+    payload = encrypt_bytes(imgStr)
+    if (send_ss_topic):
+        send_packet(SCREENSHOT_TOPIC, payload)
+
+    send_packet(FOOTAGE_TOPIC, payload)
   
             
     # Draw framerate in corner of frame
