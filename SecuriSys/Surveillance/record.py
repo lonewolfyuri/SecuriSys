@@ -163,7 +163,7 @@ def next(ndx, videostream, interpreter, socket, outVideo):
             object_name = labels[int(classes[i])]  # Look up object name from "labels" array using class index
             # object_name= labels
             if (object_name == "person"):
-                frame, sens_ss_topic = handle_person(frame, scores, boxes, i)
+                frame, send_ss_topic = handle_person(frame, scores, boxes, i)
 
     # package, encrypt, and publish our packets
     outVideo.write(frame)
