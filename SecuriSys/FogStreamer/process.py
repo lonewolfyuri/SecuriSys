@@ -7,6 +7,10 @@ from gcloud import storage
 import numpy as np
 import cv2
 import os
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+import sys
 
 # Topic Filters: "10001" - Central Hub | "10002" - Sensors | "10003" - Screenshots | "10004" - Footage
 
@@ -174,6 +178,10 @@ class Fog:
             self._ship_video()
             # re-init footage for new hour
             self._init_footage()
+            
+    def _decrypt_payload(self, payload):
+        f = Fernet(NET_KEY)
+        return f.decrypt(payload)
 
     def run(self):
         while True:
@@ -188,9 +196,9 @@ class Fog:
                         self._handle_hub(result[5:].decode("utf-8"))
                         print("Result: %s" % result)
                     elif topic == SCREENSHOT_TOPIC:
-                        self._handle_screenshot(result[5:])
+                        self._handle_screenshot(self._decrypt_payload(result[5:]))
                     elif topic == FOOTAGE_TOPIC:
-                        self._handle_footage(result[5:])
+                        self._handle_footage(self._decrypt_payload(result[5:]))
                     elif topic == CONNECT_TOPIC:
                         self.hub_timer = time.time()
             except zmq.Again as err:

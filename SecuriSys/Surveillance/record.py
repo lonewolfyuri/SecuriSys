@@ -237,51 +237,58 @@ while True:
     #for i in range(len(scores)):
     send_ss_topic = False
     
-    for i in range(1):#just loop[ over the person object
+    for i in range(len(scores)):#just loop[ over the person object
         if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
 
             # Get bounding box coordinates and draw box
             # Interpreter can return coordinates that are outside of image dimensions, need to force them to be within image using max() and min()
-            ymin = int(max(1,(boxes[i][0] * imH)))
-            xmin = int(max(1,(boxes[i][1] * imW)))
-            ymax = int(min(imH,(boxes[i][2] * imH)))
-            xmax = int(min(imW,(boxes[i][3] * imW)))
             
-            cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), (10, 255, 0), 2)
 
             # Draw label
             object_name = labels[int(classes[i])] # Look up object name from "labels" array using class index
             #object_name= labels
             
-            label = '%s: %d%%' % (object_name, int(scores[i]*100)) # Example: 'person: 72%'
-            labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2) # Get font size
-            label_ymin = max(ymin, labelSize[1] + 10) # Make sure not to draw label too close to top of window
-            cv2.rectangle(frame, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), (255, 255, 255), cv2.FILLED) # Draw white box to put label text in
-            cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
             
             if (object_name == "person"):
+                ymin = int(max(1,(boxes[i][0] * imH)))
+                xmin = int(max(1,(boxes[i][1] * imW)))
+                ymax = int(min(imH,(boxes[i][2] * imH)))
+                xmax = int(min(imW,(boxes[i][3] * imW)))
+
+                cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), (10, 255, 0), 2)
+                
+                label = '%s: %d%%' % (object_name, int(scores[i]*100)) # Example: 'person: 72%'
+                labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2) # Get font size
+                label_ymin = max(ymin, labelSize[1] + 10) # Make sure not to draw label too close to top of window
+                cv2.rectangle(frame, (xmin, label_ymin-labelSize[1]-10), (xmin+labelSize[0], label_ymin+baseLine-10), (255, 255, 255), cv2.FILLED) # Draw white box to put label text in
+                cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
+
                 send_ss_topic = True
                 
                 
             
-        #we just write to the video (10004) but no ss (10003)
-        #add image to video string
-        img_encode = cv2.imencode('.jpg', frame)[1]
-        data_encode = np.array(img_encode)
-        imgStr = data_encode.tostring()
+    #we just write to the video (10004) but no ss (10003)
+    #add image to video string
+    img_encode = cv2.imencode('.jpg', frame)[1]
+    data_encode = np.array(img_encode)
+    rawImgStr = data_encode.tostring()
 
-        if (send_ss_topic):
-            ss_packet =bytes(ss_topic, 'utf8') + imgStr
-            socket.send(ss_packet)
-            print("sent", ss_topic)
+    #encode the image using symetric key encryption
+    f = Fernet(NET_KEY)
+    imgStr = f.encrypt(rawImgStr)
 
-        
-        ##only sendin 1 image this time
-        vid_packet = bytes(vid_topic, 'utf8') + imgStr
-        socket.send(vid_packet)
-        print("sent", vid_topic)
-        
-        
+    if (send_ss_topic):
+        ss_packet =bytes(ss_topic, 'utf8') + imgStr
+        socket.send(ss_packet)
+        print("sent", ss_topic)
+
+
+    ##only sendin 1 image this time
+    vid_packet = bytes(vid_topic, 'utf8') + imgStr
+    socket.send(vid_packet)
+    print("sent", vid_topic)
+
+
         
         
         
