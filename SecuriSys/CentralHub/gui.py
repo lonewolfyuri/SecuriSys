@@ -275,7 +275,7 @@ class HubGui:
             self.timer += 1
 
     def _encrypt_payload(self, payload):
-        return Fernet(NET_KEY).encrypt(payload.encode("utf-8"))
+        return Fernet(NET_KEY).encrypt(payload.encode("utf-8")).decode("utf-8")
 
     def _decrypt_payload(self, payload):
         return Fernet(NET_KEY).decrypt(payload).decode("utf-8")
