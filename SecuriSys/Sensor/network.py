@@ -22,7 +22,7 @@ def run(sen, topic, socket):
         next(sen, topic, socket)
         time.sleep(0.1)
 
-def _encrypt_payload(self, payload):
+def _encrypt_payload(payload):
     return Fernet(NET_KEY).encrypt(payload)
 
 def next(sen, topic, socket):
