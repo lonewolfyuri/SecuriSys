@@ -300,7 +300,7 @@ class HubGui:
                 if topic == SENSOR_TOPIC:
                     sensor_in = True
                     self.sensor_timer = 0
-                    self._handle_sensor(self._decrypt_payload(result[5:].decode("utf-8")))  # handle sensor data
+                    self._handle_sensor(self._decrypt_payload(result[5:]))  # handle sensor data
                 elif topic == SCREENSHOT_TOPIC:
                     self.screenshot = True  # handle screenshot
                 elif topic == CONNECT_SURV_TOPIC:
