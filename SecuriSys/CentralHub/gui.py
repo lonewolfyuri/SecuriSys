@@ -296,7 +296,7 @@ class HubGui:
             if result:
                 topic = result[0:5].decode("utf-8")
                 print("Topic: %s" % topic)
-                print("Result Input: %s" % result)
+                #print("Result Input: %s" % result)
                 if topic == SENSOR_TOPIC:
                     sensor_in = True
                     self.sensor_timer = 0
@@ -339,6 +339,7 @@ class HubGui:
         self.vibration = False
 
     def _handle_sensor(self, data):
+        print("Sensor Data: %s" % data)
         self.motion = data[0] == '1'
         self.light = data[1] == '1'
         self.sound = data[2] == '1'
