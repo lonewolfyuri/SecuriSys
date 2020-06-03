@@ -326,7 +326,7 @@ class HubGui:
         if self.alarm:
             self._minute_timer()
             message = self._get_message()
-            self.pub_socket.send_string("%s%s" % (HUB_TOPIC, self._encrypt_payload(message)))
+            self.pub_socket.send_string("%s%s" % (HUB_TOPIC, self._encrypt_payload(message.encode("utf8"))))
             self.pub_socket.send_string("%s" % HUB_TOPIC)
         self.pub_socket.send_string("%s" % CONNECT_HUB_TOPIC)
 

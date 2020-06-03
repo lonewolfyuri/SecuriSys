@@ -29,7 +29,7 @@ def next(sen, topic, socket):
     senVals = sen.get_sample()
     messagedata = binarySensor(senVals);
     print(topic + messagedata)
-    socket.send_string("%s%s" % (topic, _encrypt_payload(messagedata)))
+    socket.send_string("%s%s" % (topic, _encrypt_payload(messagedata.encode("utf8"))))
 
 def binarySensor(senVals):
     vals = ""
