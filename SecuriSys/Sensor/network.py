@@ -19,7 +19,7 @@ def init():
 
 def run(sen, topic, socket):
     while True:
-        next()
+        next(sen, topic, socket)
         time.sleep(0.1)
 
 def _encrypt_payload(self, payload):
