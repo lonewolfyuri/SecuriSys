@@ -62,7 +62,7 @@ def run(videostream, interpreter, socket, bucket):
             break
         if ndx > 10:
             ndx = 0
-            send_packet(socket, CONNECT_SURV_TOPIC, encrypt_bytes(bytes("KeepMeAliave!", 'utf8')))
+            send_packet(socket, CONNECT_SURV_TOPIC, encrypt_bytes(bytes("KeepMeAlive!", 'utf8')))
             #send_packet(socket, CONNECT_SURV_TOPIC, encrypt_bytes(b'keepaliave'))
         else:
             ndx += 1
