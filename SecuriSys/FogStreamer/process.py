@@ -30,6 +30,7 @@ class Fog:
         self.hub_timer = time.time()
 
         self.text_sent = False
+        self.conn_fail = False
         self.emergency_contact = emergency_contact
         self.text_client = Client("ACfb45069384449efc0a19acb6ea88d359", "0046fd99e4b7e2c5291a48faf8bce35d")
 
@@ -185,7 +186,9 @@ class Fog:
     def run(self):
         while True:
             if time.time() - self.hub_timer > 60:
-                self._send_text("Emergency! Lost Communication with Central Hub!")
+                self.conn_fail = True
+                if not self.text_sent:
+                    self._send_text("Emergency! Lost Communication with Central Hub!")
                 self.hub_timer = time.time()
             try:
                 result = self.sub_socket.recv()
@@ -200,6 +203,9 @@ class Fog:
                         self._handle_footage(self._decrypt_payload(result[5:]))
                     elif topic == CONNECT_HUB_TOPIC:
                         self.hub_timer = time.time()
+                        if self.conn_fail and self.text_sent:
+                            self.text_sent = False
+                        self.conn_fail = False
             except zmq.Again as err:
                 print(err)
             except:
