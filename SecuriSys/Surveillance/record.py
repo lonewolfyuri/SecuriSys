@@ -62,7 +62,8 @@ def run(videostream, interpreter, socket, bucket):
             break
         if ndx > 10:
             ndx = 0
-            send_packet(socket, CONNECT_SURV_TOPIC, bytes())
+            send_packet(socket, CONNECT_SURV_TOPIC, encrypt_bytes(bytes("KeepMeAliave!", 'utf8')))
+            #send_packet(socket, CONNECT_SURV_TOPIC, encrypt_bytes(b'keepaliave'))
         else:
             ndx += 1
 
@@ -175,7 +176,6 @@ def next(videostream, interpreter, socket, outVideo):
     payload = encrypt_bytes(imgStr)
     if (send_ss_topic):
         send_packet(socket, SCREENSHOT_TOPIC, payload)
-    send_packet(socket, CONNECT_SURV_TOPIC, b'')
     
     t2 = cv2.getTickCount()
     time1 = (t2 - t1) / freq
