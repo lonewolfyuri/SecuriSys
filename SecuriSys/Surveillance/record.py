@@ -175,7 +175,7 @@ def next(videostream, interpreter, socket, outVideo):
     payload = encrypt_bytes(imgStr)
     if (send_ss_topic):
         send_packet(socket, SCREENSHOT_TOPIC, payload)
-    send_packet(socket, CONNECT_SURV_TOPIC, "")
+    send_packet(socket, CONNECT_SURV_TOPIC, b'')
     
     t2 = cv2.getTickCount()
     time1 = (t2 - t1) / freq
