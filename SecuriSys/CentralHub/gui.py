@@ -300,7 +300,7 @@ class HubGui:
                 if topic == SENSOR_TOPIC:
                     sensor_in = True
                     self.sensor_timer = 0
-                    self._handle_sensor(self._decrypt_payload(result[5:]))  # handle sensor data
+                    self._handle_sensor(self._decrypt_payload(result[5:].decode("utf-8")))  # handle sensor data
                 elif topic == SCREENSHOT_TOPIC:
                     self.screenshot = True  # handle screenshot
                 elif topic == CONNECT_SURV_TOPIC:
@@ -311,6 +311,7 @@ class HubGui:
             print(err)
             # print("Didn't read from a Socket")
         except:
+            print("Reconnecting Sockets")
             self.sub_socket = self.context.socket(zmq.SUB)
             self.sub_socket.connect("%s:%s" % (self.sens_addr, self.sens_port))
             self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
