@@ -278,9 +278,7 @@ class HubGui:
         return Fernet(NET_KEY).encrypt(payload.encode("utf-8"))
 
     def _decrypt_payload(self, payload):
-        result = Fernet(NET_KEY).decrypt(payload).decode("utf-8")
-        print("Result: %s" % result)
-        return result
+        return Fernet(NET_KEY).decrypt(payload).decode("utf-8")
 
     def _handle_sockets(self):
         sensor_in = False
@@ -332,7 +330,6 @@ class HubGui:
             self._minute_timer()
             message = self._get_message()
             self.pub_socket.send_string("%s%s" % (HUB_TOPIC, self._encrypt_payload(message)))
-            self.pub_socket.send_string("%s" % HUB_TOPIC)
         self.pub_socket.send_string("%s" % CONNECT_HUB_TOPIC)
 
     def _reset_flags(self):
