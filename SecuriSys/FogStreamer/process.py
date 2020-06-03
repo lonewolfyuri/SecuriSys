@@ -217,6 +217,7 @@ class Fog:
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.hub_topic)
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.screenshot_topic)
                 self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.footage_topic)
+                self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, CONNECT_HUB_TOPIC)
 
 
 if __name__ == "__main__":

@@ -57,6 +57,7 @@ class HubGui:
 
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.sens_topic)
         self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.surv_topic)
+        self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, CONNECT_SURV_TOPIC)
 
         self.pub_socket = self.context.socket(zmq.PUB)
         self.pub_socket.bind("tcp://*:%s" % self.fog_port)
@@ -320,6 +321,7 @@ class HubGui:
             self.sub_socket.connect("%s:%s" % (self.surv_addr, self.surv_port))
             self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.sens_topic)
             self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, self.surv_topic)
+            self.sub_socket.setsockopt_string(zmq.SUBSCRIBE, CONNECT_SURV_TOPIC)
 
         # print("Read Sockets")
         self._process_results()
