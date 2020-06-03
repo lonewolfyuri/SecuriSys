@@ -277,7 +277,7 @@ class HubGui:
         return Fernet(NET_KEY).encrypt(payload.encode("utf-8"))
 
     def _decrypt_payload(self, payload):
-        return Fernet(NET_KEY).decrypt().decode("utf-8")
+        return Fernet(NET_KEY).decrypt(payload).decode("utf-8")
 
     def _handle_sockets(self):
         sensor_in = False
