@@ -23,13 +23,13 @@ def run(sen, topic, socket):
         time.sleep(0.1)
 
 def _encrypt_payload(payload):
-    return Fernet(NET_KEY).encrypt(payload)
+    return Fernet(NET_KEY).encrypt(payload.encode("utf-8"))
 
 def next(sen, topic, socket):
     senVals = sen.get_sample()
     messagedata = binarySensor(senVals);
     print(topic + messagedata)
-    socket.send_string("%s%s" % (topic, _encrypt_payload(messagedata.encode("utf8"))))
+    socket.send_string("%s%s" % (topic, _encrypt_payload(messagedata)))
 
 def binarySensor(senVals):
     vals = ""
