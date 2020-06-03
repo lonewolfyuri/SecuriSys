@@ -24,7 +24,6 @@ from parameters import *
 
 import base64
 from os import path
-import datetime
 
 frame_width = 1280
 frame_height = 720
@@ -63,7 +62,7 @@ def run(videostream, interpreter, socket, bucket):
             break
         if ndx > 10:
             ndx = 0
-            send_packet(socket, CONNECT_SURV_TOPIC, "")
+            send_packet(socket, CONNECT_SURV_TOPIC, bytes())
         else:
             ndx += 1
 
@@ -129,7 +128,7 @@ def _init_footage():
     except:
         pass
 
-    return cv2.VideoWriter('output/video.avi', cv2.VideoWriter_fourcc(*'mjpg'), 10, (frame_width, frame_height)), None, datetime.now()
+    return cv2.VideoWriter('output/video.avi', cv2.VideoWriter_fourcc(*'mjpg'), 10, (frame_width, frame_height)), time.time(), datetime.now()
 
 def _ship_footage(bucket, footage_dt):
     # figure out how to push video to the cloud
