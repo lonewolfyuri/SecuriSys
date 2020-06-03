@@ -99,11 +99,11 @@ def adjust_gamma(image, gamma=1.0):
 def _handle_gamma(frame):
     hour = datetime.now().hour
     if hour < 4 or hour >= 22:
-        return adjust_gamma(frame, 2.0)
+        return adjust_gamma(frame, 3.5)
     elif hour < 5 or hour >= 21:
-        return adjust_gamma(frame, 1.66)
+        return adjust_gamma(frame, 2.75)
     elif hour < 6 or hour >= 20:
-        return adjust_gamma(frame, 1.33)
+        return adjust_gamma(frame, 2)
     else:
         return frame
 
