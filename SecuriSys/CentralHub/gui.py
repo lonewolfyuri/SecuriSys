@@ -296,6 +296,7 @@ class HubGui:
             if result:
                 topic = result[0:5].decode("utf-8")
                 print("Topic: %s" % topic)
+                print("Result Input: %s" % result)
                 if topic == SENSOR_TOPIC:
                     sensor_in = True
                     self.sensor_timer = 0
@@ -306,7 +307,6 @@ class HubGui:
                     screenshot_in = True
                     self.screenshot_timer = 0
                 # print("Read from a Socket")
-                print("Result Input: %s" % result)
         except zmq.Again as err:
             print(err)
             # print("Didn't read from a Socket")
