@@ -119,7 +119,7 @@ class Fog:
             self._append_file()
         if self.minute and not self.text_sent:
             self._send_text()
-        if not self.minute:
+        if self.text_sent and not self.minute and not self.conn_fail:
             self.text_sent = False
         if time.time() - self.first_read >= HOUR:
             # push txt file to cloud
