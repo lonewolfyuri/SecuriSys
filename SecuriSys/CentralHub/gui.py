@@ -6,7 +6,6 @@ from guizero import Window, Picture
 from parameters import *
 from cryptography.fernet import Fernet
 import zmq, select, pygame, fcntl, os, socket
-from numba import jit, njit, jitclass
 
 # self.state values: "init" | "input" | "armed" | "disarmed"
 
@@ -14,7 +13,6 @@ w = 800
 h = 430
 s = 40
 
-@jitclass
 class HubGui:
     def __init__(self, sens_port = "6000", surv_port = "7000", fog_port = "8000"):
         self.sens_port = sens_port
