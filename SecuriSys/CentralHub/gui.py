@@ -6,6 +6,7 @@ from guizero import Window, Picture
 from parameters import *
 from cryptography.fernet import Fernet
 import zmq, select, pygame, fcntl, os, socket
+from numba import jit, njit
 
 # self.state values: "init" | "input" | "armed" | "disarmed"
 
@@ -250,6 +251,7 @@ class HubGui:
         self.sampling_widget = gz.Box(self.app, visible=False)
         self.sampling_widget.repeat(50, self._handle_sockets)
 
+    @njit
     def _sensor_timer(self):
         if self.sensor_timer >= 300:
             self.sensor_timer = 0
@@ -258,6 +260,7 @@ class HubGui:
         else:
             self.sensor_timer += 1
 
+    @njit
     def _screenshot_timer(self):
         if self.screenshot_timer >= 300:
             self.screenshot_timer = 0
@@ -266,6 +269,7 @@ class HubGui:
         else:
             self.screenshot_timer += 1
 
+    @njit
     def _minute_timer(self):
         if self.timer >= 300:
             self.timer = 0
@@ -274,12 +278,15 @@ class HubGui:
         else:
             self.timer += 1
 
+    @njit
     def _encrypt_payload(self, payload):
         return Fernet(NET_KEY).encrypt(payload.encode("utf-8")).decode("utf-8")
 
+    @njit
     def _decrypt_payload(self, payload):
         return Fernet(NET_KEY).decrypt(payload).decode("utf-8")
 
+    @njit
     def _handle_sockets(self):
         sensor_in = False
         screenshot_in = False
@@ -332,6 +339,7 @@ class HubGui:
             self.pub_socket.send_string("%s%s" % (HUB_TOPIC, self._encrypt_payload(message)))
         self.pub_socket.send_string("%s" % CONNECT_HUB_TOPIC)
 
+    @njit
     def _reset_flags(self):
         self.screenshot = False
         self.motion = False
@@ -340,6 +348,7 @@ class HubGui:
         self.gas = False
         self.vibration = False
 
+    @njit
     def _handle_sensor(self, data):
         print("Sensor Data: %s" % data)
         self.motion = data[0] == '1'
@@ -348,6 +357,7 @@ class HubGui:
         self.gas = data[3] == '1'
         self.vibration = data[4] == '1'
 
+    @njit
     def _get_message(self):
         result = ""
 
@@ -388,6 +398,7 @@ class HubGui:
 
         return result
 
+    @njit
     def _input_0(self):
         print(self.state)
         if self.state == "init":
@@ -401,6 +412,7 @@ class HubGui:
             else:
                 self._code_len()
 
+    @njit
     def _input_1(self):
         print(self.state)
         if self.state == "init":
@@ -414,6 +426,7 @@ class HubGui:
             else:
                 self._code_len()
 
+    @njit
     def _input_2(self):
         print(self.state)
         if self.state == "init":
@@ -427,6 +440,7 @@ class HubGui:
             else:
                 self._code_len()
 
+    @njit
     def _input_3(self):
         print(self.state)
         if self.state == "init":
@@ -440,6 +454,7 @@ class HubGui:
             else:
                 self._code_len()
 
+    @njit
     def _input_4(self):
         print(self.state)
         if self.state == "init":
@@ -453,6 +468,7 @@ class HubGui:
             else:
                 self._code_len()
 
+    @njit
     def _input_5(self):
         print(self.state)
         if self.state == "init":
@@ -466,6 +482,7 @@ class HubGui:
             else:
                 self._code_len()
 
+    @njit
     def _input_6(self):
         print(self.state)
         if self.state == "init":
@@ -479,6 +496,7 @@ class HubGui:
             else:
                 self._code_len()
 
+    @njit
     def _input_7(self):
         print(self.state)
         if self.state == "init":
@@ -492,6 +510,7 @@ class HubGui:
             else:
                 self._code_len()
 
+    @njit
     def _input_8(self):
         print(self.state)
         if self.state == "init":
@@ -505,6 +524,7 @@ class HubGui:
             else:
                 self._code_len()
 
+    @njit
     def _input_9(self):
         print(self.state)
         if self.state == "init":
@@ -518,28 +538,35 @@ class HubGui:
             else:
                 self._code_len()
 
+    @njit
     def _input_code(self):
         self._change_state("input")
         self.code = ""
 
+    @njit
     def _code_len(self):
         self.code = ""
         self._change_message("Must be 4-8 Digits")
 
+    @njit
     def _encrypt_len(self):
         self.encrypt = ""
         self._change_message("Must be 4-8 Digits")
 
+    @njit
     def _wrong_code(self):
         self.code = ""
         self._change_message("Wrong Code!!!")
 
+    @njit
     def _encrypt_code(self):
         self.encrypt = Fernet(self.key).encrypt(self.encrypt.encode())
 
+    @njit
     def _check_code(self):
         return self.code == Fernet(self.key).decrypt(self.encrypt).decode()
 
+    @njit
     def _handle_arm(self):
         print(self.state)
         if self.state == "input":
@@ -571,27 +598,32 @@ class HubGui:
             self._change_message("Input Alarm Code")
             self._input_code()
 
+    @njit
     def _change_state(self, new_state):
         self.prev_state = self.state
         self.state = new_state
 
+    @njit
     def _change_message(self, new_message):
         self.message = "   " + new_message + "   "
         self.welcome_message.clear()
         self.welcome_message.append(self.message)
 
+    @njit
     def _toggle_arm_button(self):
         if self.state == "armed":
             self.arm_button.image = "resources/button_disarm_smol.gif"
         else:
             self.arm_button.image = "resources/button_arm_smol.gif"
 
+    @njit
     def _process_results(self):
         if not self.alarm:
             if self.state == 'armed' or self.prev_state == 'armed':
                 if self.screenshot or self.motion or self.sound or self.light or self.gas or self.vibration:
                     self._sound_alarm()
 
+    @njit
     def _sound_alarm(self):
         self.alarm = True
         self.timer = 0
@@ -600,6 +632,7 @@ class HubGui:
         pygame.mixer.music.play(9999999, 0.0)
         print("Alarm is on!")
 
+    @njit
     def _stop_alarm(self):
         self.alarm = False
         self.timer = 0
@@ -608,6 +641,7 @@ class HubGui:
         pygame.mixer.music.stop()
         print("Alarm is off!")
 
+    @njit
     def _get_increment(self):
         if self.progress['value'] <= 30:
             return 1
@@ -618,6 +652,7 @@ class HubGui:
         else:
             return 2
 
+    @njit
     def _progress_bar(self):
         if self.progress['value'] < 130:
             self.progress['value'] += self._get_increment()
