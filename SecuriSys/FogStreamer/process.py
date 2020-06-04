@@ -185,6 +185,7 @@ class Fog:
 
     def run(self):
         while True:
+            print("Time Since Last Hub: %f" % (time.time() - self.hub_timer))
             if time.time() - self.hub_timer > 60:
                 self.conn_fail = True
                 if not self.text_sent:
@@ -207,7 +208,7 @@ class Fog:
                         self.conn_fail = False
             except zmq.Again as err:
                 print(err)
-            except socket.error as err:
+            except:
                 print("Reconnecting Sockets")
                 print(err)
                 self.sub_socket = self.context.socket(zmq.SUB)
