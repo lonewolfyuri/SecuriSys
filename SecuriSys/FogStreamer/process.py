@@ -192,7 +192,7 @@ class Fog:
                     self._send_text("Emergency! Lost Communication with Central Hub!")
                 self.hub_timer = time.time()
             try:
-                result = self.sub_socket.recv()
+                result = self.sub_socket.recv(flags=zmq.NOBLOCK)
                 if result:
                     topic = result[0:5].decode("utf-8")
                     if topic == HUB_TOPIC:
