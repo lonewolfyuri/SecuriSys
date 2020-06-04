@@ -185,7 +185,7 @@ class Fog:
 
     def run(self):
         while True:
-            print("Time Since Last Hub: %f" % (time.time() - self.hub_timer))
+            #print("Time Since Last Hub: %f" % (time.time() - self.hub_timer))
             if time.time() - self.hub_timer > 60:
                 self.conn_fail = True
                 if not self.text_sent:
