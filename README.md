@@ -8,7 +8,7 @@ Our project is a home security system that uses edge computing named SecuriSys. 
 ## Quality Attributes:
   + Security - RSA Encryption as well as Secure Google Cloud Storage.
   + Reliability - Self-reconnecting sockets to recover from loss of connection as well as reliability in power outages and approriate response in loss of devices.
-  + Performance - Our system is designed with each device performing operations accross the system as a whole to increase performance and ensure optimal run-time behavior.
+  + Performance - Our system is designed with each device performing operations across the system as a whole to increase performance and ensure optimal run-time behavior.
 
 ## Optimizations from Phase 2 Feedback
 The feedback we received from phase 2 that we decided to implement are as follows:
