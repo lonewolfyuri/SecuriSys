@@ -5,6 +5,11 @@
 
 Our project is a home security system that uses edge computing named SecuriSys. The system reads in feed from various outputs which include 5 sensors and a live camera feed. These five sensors are motion, smoke, sound, vibration, and light. The camera feed will not only push it’s live footage directly to the cloud, but it will also take screenshots of its feed whenever it recognizes a face and pushes the screenshot to the fog. When the system is armed it will alert the appropriate authorities when it is triggered (sensor or facial recognition). All the camera and sensor data are being sent to the cloud (via the fog or directly from the camera edge device). 
 
+## Quality Attributes:
+  + Security - RSA Encryption as well as Secure Google Cloud Storage.
+  + Reliability - Self-reconnecting sockets to recover from loss of connection as well as reliability in power outages and approriate response in loss of devices.
+  + Performance - Our system is designed with each device performing operations accross the system as a whole to increase performance and ensure optimal run-time behavior.
+
 ## Optimizations from Phase 2 Feedback
 The feedback we received from phase 2 that we decided to implement are as follows:
   + The fog is being overloaded by having it take in so much data (constant video footage+all the data from the central hub)
@@ -58,10 +63,3 @@ The feedback we received from phase 2 that we decided to implement are as follow
   + Fog Subscribes to Surveillance + Central Hub devices
   + Central Hub device subscribes to Sensor + Surveillance devices
   + Google Cloud Storage authenticates the account based on a system path variable, and if the provided credentials are valid, it proceeds to open a client.
-
-## Quality Attributes:
-  + Security - RSA Encryption as well as Secure Google Cloud Storage.
-  + Reliability - Self-reconnecting sockets to recover from loss of connection as well as reliability in power outages and approriate response in loss of devices.
-  + Performance - Our system is designed with each device performing operations accross the system as a whole to increase performance and ensure optimal run-time behavior.
-
-
