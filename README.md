@@ -1,7 +1,5 @@
-# CS190Project6Repo - SecuriSys
-
-## SecuriSys: Phase 3
-### CS190 - Project 2 - Team 6
+# SecuriSys
+### CS190 - Team 6: George Gabricht - Blanca Lopez - Ben Nolpho - Jona Huang
 
 # Introduction
 
@@ -24,7 +22,7 @@ The feedback we received from phase 2 that we decided to implement are as follow
 
 # Diagram of the Network:
 
- ![Network Diagram](/network_diagram.png)
+ ![Network Diagram](/SecuriSysNetworkDiagram.png)
  
 # Device Catalog:
 | **Device**                | **Hardware Features**           |
