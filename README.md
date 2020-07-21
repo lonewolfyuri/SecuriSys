@@ -1,5 +1,4 @@
 # SecuriSys
-### CS190 - Team 6: George Gabricht - Blanca Lopez - Ben Nolpho - Jona Huang
 
 ## Introduction
 
